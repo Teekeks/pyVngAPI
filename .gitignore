@@ -1,0 +1,7 @@
+/tests
+.idea/
+test.py
+items_type_from_crafting.py
+/api-specs
+/docs
+.venv/
