@@ -22,6 +22,9 @@ class APIResponse[T]:
     error_code: str | None
     data: T
 
+    def __iter__(self):
+        return iter([self, self.data])
+
 
 @dataclass
 class APIBatchResult[T]:
