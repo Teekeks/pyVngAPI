@@ -1,7 +1,8 @@
 /tests
 .idea/
-test.py
+tests/test.py
 items_type_from_crafting.py
 /api-specs
 /docs
 .venv/
+**/__pycache__/
