@@ -2,8 +2,7 @@ from vng_api.helper.internal import optional
 from vng_api.base import APISub, APIBatchResult, APIResponse
 from typing import TYPE_CHECKING, List, Dict, Any, Iterable, Literal
 
-from vng_api.base import Mineable
-from vng_api.types import Manny
+from vng_api.types import Manny, Mineable
 
 if TYPE_CHECKING:
     from vng_api.client import APIClient

@@ -1,5 +1,5 @@
 from dataclasses import dataclass, field
-from typing import List, TYPE_CHECKING, Literal, Union
+from typing import List, TYPE_CHECKING
 
 from aiohttp import ClientResponse
 
@@ -7,9 +7,7 @@ if TYPE_CHECKING:
     from vng_api.client import APIClient
 
 
-__all__ = ['APIResponse', 'APIBatchResult', 'APIStats', 'APISub', 'BASEURL', 'Mineable']
-
-Mineable = Union[Literal['deuterium', 'metals', 'ice', 'carbon_compounds'], str]
+__all__ = ['APIResponse', 'APIBatchResult', 'APIStats', 'APISub', 'BASEURL']
 
 BASEURL = 'https://neumann-probe.net/api/'
 

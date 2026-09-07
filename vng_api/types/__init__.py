@@ -5,7 +5,7 @@ __all__ = ['Vector', 'Sector', 'SectorVisitHistory', 'SectorObservation', 'Secto
            'StorageContainerRules', 'ContainerKind', 'ContainerMeta', 'StorageContainer', 'ItemKind', 'Item', 'ResourceStockContainer',
            'CapacityUnit', 'ProbeInventory', 'ProbeSystems', 'ProbeNavigation', 'ProbeTerminalAlert', 'ProbeTerminalAlertAction',
            'ProbeSensorMode', 'ProbeExternalTank', 'MannyCargo', 'ResourceStock', 'ProbeStatus', 'ProbeSummary', 'ProbeSummaryList', 'RadiusUnit',
-           'ResourceType', 'Player', 'APIKey']
+           'ResourceType', 'Player', 'APIKey', 'Mineable']
 
 from dataclasses import dataclass, field
 from mashumaro import DataClassDictMixin
@@ -24,6 +24,8 @@ ProbeStatus = Literal['idle', 'preparing', 'accelerating', 'cruising', 'decelera
 RadiusUnit = Literal['solar_radius', 'earth_radius', 'kilometer', 'astronomical_unit']
 ResourceType = Literal['deuterium', 'metals', 'ice', 'carbon_compounds']
 ObservedClass = Literal['suspected_missile', 'large_ship', 'ship']
+Mineable = Union[ResourceType, str]
+
 
 
 @dataclass
