@@ -1,8 +1,7 @@
 from vng_api.base import APISub, APIResponse
 from typing import TYPE_CHECKING
 
-from vng_api.helper.internal import optional
-from vng_api.subs.mannies import ManniesSub
+from vng_api.subs.probe.mannies import ManniesSub
 from vng_api.types import ProbeType, OutOfRangeProbe, Probe, ProbeSummaryList, Vector, Movement
 
 if TYPE_CHECKING:
