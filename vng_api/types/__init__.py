@@ -5,7 +5,7 @@ __all__ = ['Vector', 'Sector', 'SectorVisitHistory', 'SectorObservation', 'Secto
            'StorageContainerRules', 'ContainerKind', 'ContainerMeta', 'StorageContainer', 'ItemKind', 'Item', 'ResourceStockContainer',
            'CapacityUnit', 'ProbeInventory', 'ProbeSystems', 'ProbeNavigation', 'ProbeTerminalAlert', 'ProbeTerminalAlertAction',
            'ProbeSensorMode', 'ProbeExternalTank', 'MannyCargo', 'ResourceStock', 'ProbeStatus', 'ProbeSummary', 'ProbeSummaryList', 'RadiusUnit',
-           'ResourceType', 'Player', 'APIKey', 'Mineable', 'Printable', 'PrintResponse']
+           'ResourceType', 'Player', 'APIKey', 'Mineable', 'Printable', 'PrintResponse', 'MissileState']
 
 from dataclasses import dataclass, field
 from mashumaro import DataClassDictMixin
@@ -593,3 +593,19 @@ class APIKey(DataClassDictMixin):
 class PrintResponse(DataClassDictMixin):
     manny: Manny
     inventory: ProbeInventory
+
+
+@dataclass
+class MissileState(DataClassDictMixin):
+    id: str
+    launcherKind: str
+    launcherId: str
+    targetId: str
+    status: str
+    launchedAt: str
+    createdAt: str
+    updatedAt: str
+    impactAt: str | None = None
+    result: str | None = None
+    actionId: str | None = None
+    details: Dict[Any, Any] | None = None
