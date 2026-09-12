@@ -17,6 +17,11 @@ from vng_api.types import CraftingRecipe
 
 class APIClient:
 
+    tool_name: str | None = None
+    """Set this to add your tools name to the user agent string of all requests"""
+    tool_author: str | None = None
+    """Set this to add your tools author to the user agent string of all requests, ignored if tool_name is not set as well."""
+
     def __init__(self, token: str):
         self.stats: APIStats = APIStats()
         self.token = token
@@ -26,9 +31,12 @@ class APIClient:
         self.probe: ProbeSub = ProbeSub(self)
 
     def get_headers(self) -> Dict[str, str]:
+        ua = f'VNG-API Client v{__version__} by Teekeks'
+        if self.tool_name is not None:
+            ua = f'{self.tool_name}{f' by {self.tool_author}' if self.tool_author is not None else ''} (using {ua})'
         return {
             'Authorization': f'Bearer {self.token}',
-            'User-Agent': f'VNG-API Client v{__version__} by Teekeks'
+            'User-Agent': ua
         }
 
     async def issue_cache_update(self, d: Any):
