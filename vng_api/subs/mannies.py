@@ -2,7 +2,7 @@ from vng_api.helper.internal import optional
 from vng_api.base import APISub, APIBatchResult, APIResponse
 from typing import TYPE_CHECKING, List, Dict, Any, Iterable, Literal
 
-from vng_api.types import Manny, Mineable
+from vng_api.types import Manny, Mineable, Printable, PrintResponse
 
 if TYPE_CHECKING:
     from vng_api.client import APIClient
@@ -205,6 +205,22 @@ class ManniesSub(APISub):
                                           lambda inp: Manny.from_dict(inp['manny']))
         if data.success:
             await self.client.issue_cache_update(data.data)
+        return data
+
+    async def start_atomic_print(self, pid: int, recipe: Printable) -> APIResponse[PrintResponse]:
+        """Starts a recipe whose `craftableBy` includes `atomic_3d_printer`. The atomic printer reserves one available Manny aboard the probe for
+        loading and unloading; that Manny exposes the `assisting_atomic_printer` task until the craft completes or is recalled.
+
+        :param pid: Probe ID
+        :param recipe: The recipe to craft
+        """
+        data = await self.client.api_call('post',
+                                          f'probe/{pid}/atomic-printer/craft',
+                                          {'recipe': recipe},
+                                          lambda inp: PrintResponse.from_dict(inp))
+        if data.success:
+            await self.client.issue_cache_update(data.data.manny)
+            await self.client.issue_cache_update(data.data.inventory)
         return data
 
     def tasks(self, pid: int):

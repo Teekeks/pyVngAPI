@@ -5,7 +5,7 @@ __all__ = ['Vector', 'Sector', 'SectorVisitHistory', 'SectorObservation', 'Secto
            'StorageContainerRules', 'ContainerKind', 'ContainerMeta', 'StorageContainer', 'ItemKind', 'Item', 'ResourceStockContainer',
            'CapacityUnit', 'ProbeInventory', 'ProbeSystems', 'ProbeNavigation', 'ProbeTerminalAlert', 'ProbeTerminalAlertAction',
            'ProbeSensorMode', 'ProbeExternalTank', 'MannyCargo', 'ResourceStock', 'ProbeStatus', 'ProbeSummary', 'ProbeSummaryList', 'RadiusUnit',
-           'ResourceType', 'Player', 'APIKey', 'Mineable']
+           'ResourceType', 'Player', 'APIKey', 'Mineable', 'Printable', 'PrintResponse']
 
 from dataclasses import dataclass, field
 from mashumaro import DataClassDictMixin
@@ -25,7 +25,8 @@ RadiusUnit = Literal['solar_radius', 'earth_radius', 'kilometer', 'astronomical_
 ResourceType = Literal['deuterium', 'metals', 'ice', 'carbon_compounds']
 ObservedClass = Literal['suspected_missile', 'large_ship', 'ship']
 Mineable = Union[ResourceType, str]
-
+Printable = Union[Literal['micro_conductor', 'ceramic_insulator', 'crystal_substrate',
+                          'dopant_matrix', 'integrated_circuit', 'atomic_printer_part'], str]
 
 
 @dataclass
@@ -586,3 +587,9 @@ class APIKey(DataClassDictMixin):
     label: str
     lastFour: str
     createdAt: str
+
+
+@dataclass
+class PrintResponse(DataClassDictMixin):
+    manny: Manny
+    inventory: ProbeInventory
