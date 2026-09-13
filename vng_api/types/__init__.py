@@ -5,7 +5,8 @@ __all__ = ['Vector', 'Sector', 'SectorVisitHistory', 'SectorObservation', 'Secto
            'StorageContainerRules', 'ContainerKind', 'ContainerMeta', 'StorageContainer', 'ItemKind', 'Item', 'ResourceStockContainer',
            'CapacityUnit', 'ProbeInventory', 'ProbeSystems', 'ProbeNavigation', 'ProbeTerminalAlert', 'ProbeTerminalAlertAction',
            'ProbeSensorMode', 'ProbeExternalTank', 'MannyCargo', 'ResourceStock', 'ProbeStatus', 'ProbeSummary', 'ProbeSummaryList', 'RadiusUnit',
-           'ResourceType', 'Player', 'APIKey', 'Mineable', 'Printable', 'PrintResponse', 'MissileState', 'ProbeSectorResponse']
+           'ResourceType', 'Player', 'APIKey', 'Mineable', 'Printable', 'PrintResponse', 'MissileState', 'ProbeSectorResponse',
+           'AutonomousUnitObservationResponse', 'AutonomousUnitCarrier', 'AutonomousUnitObservation']
 
 from dataclasses import dataclass, field
 from mashumaro import DataClassDictMixin
@@ -618,3 +619,25 @@ class ProbeSectorResponse(DataClassDictMixin):
 
     def __iter__(self):
         return iter([self.sector, self.inventory])
+
+
+@dataclass
+class AutonomousUnitCarrier(DataClassDictMixin):
+    id: str
+    kind: Literal['probe', 'others_ship']
+
+
+@dataclass
+class AutonomousUnitObservation(DataClassDictMixin):
+    id: str
+    """Opaque public identifier of the deployed unit."""
+    kind: Literal['manny', 'others_auxiliary']
+    carrier: AutonomousUnitCarrier
+    spatialState: Literal['moving_to_sector_object', 'returning_to_carrier', 'drifting', 'landed_on_sector_object']
+
+
+@dataclass
+class AutonomousUnitObservationResponse(DataClassDictMixin):
+    autonomousUnits: List[AutonomousUnitObservation]
+    nextCursor: str | None = None
+    """Opaque cursor for the next page. Omitted on the last page."""
