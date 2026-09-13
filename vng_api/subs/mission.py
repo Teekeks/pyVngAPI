@@ -13,3 +13,11 @@ class MissionSub(APISub):
         """
         return await self.client.api_call('get', 'probe/missions', None,
                                           lambda inp: [Mission.from_dict(x) for x in inp['missions']])
+
+    async def abandon(self, mission_id: str) -> APIResponse[Mission]:
+        """Abandon an active probe mission
+
+        :param mission_id: Mission ID
+        """
+        return await self.client.api_call('post', f'probe/missions/{mission_id}/abandon', None,
+                                          lambda inp: Mission.from_dict(inp['mission']))
