@@ -9,6 +9,7 @@ from vng_api import __version__
 from vng_api.subs.probe import ProbeSub
 from vng_api.subs.sector import SectorSub
 from vng_api.subs.player import PlayerSub
+from vng_api.subs.mission import MissionSub
 
 __all__ = ['APIClient']
 
@@ -28,6 +29,7 @@ class APIClient:
         # subs:
         self.sector: SectorSub = SectorSub(self)
         self.player: PlayerSub = PlayerSub(self)
+        self.mission: MissionSub = MissionSub(self)
         self.probe: ProbeSub = ProbeSub(self)
 
     def get_headers(self) -> Dict[str, str]:

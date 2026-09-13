@@ -6,7 +6,7 @@ __all__ = ['Vector', 'Sector', 'SectorVisitHistory', 'SectorObservation', 'Secto
            'CapacityUnit', 'ProbeInventory', 'ProbeSystems', 'ProbeNavigation', 'ProbeTerminalAlert', 'ProbeTerminalAlertAction',
            'ProbeSensorMode', 'ProbeExternalTank', 'MannyCargo', 'ResourceStock', 'ProbeStatus', 'ProbeSummary', 'ProbeSummaryList', 'RadiusUnit',
            'ResourceType', 'Player', 'APIKey', 'Mineable', 'Printable', 'PrintResponse', 'MissileState', 'ProbeSectorResponse',
-           'AutonomousUnitObservationResponse', 'AutonomousUnitCarrier', 'AutonomousUnitObservation']
+           'AutonomousUnitObservationResponse', 'AutonomousUnitCarrier', 'AutonomousUnitObservation', 'Mission', 'MissionStep']
 
 from dataclasses import dataclass, field
 from mashumaro import DataClassDictMixin
@@ -641,3 +641,42 @@ class AutonomousUnitObservationResponse(DataClassDictMixin):
     autonomousUnits: List[AutonomousUnitObservation]
     nextCursor: str | None = None
     """Opaque cursor for the next page. Omitted on the last page."""
+
+
+@dataclass
+class MissionStep(DataClassDictMixin):
+    id: str
+    sortOrder: int
+    tite: str
+    description: str
+    status: Literal['pending', 'completed', 'failed', 'skipped']
+    metadata: Dict[Any, Any]
+    createdAt: str
+    updatedAt: str | None = None
+    completedAt: str | None = None
+    failedAt: str | None = None
+
+
+@dataclass
+class Mission(DataClassDictMixin):
+    id: str
+    """Stable public mission id"""
+    type: str
+    """Mission family identifier, chosen by the event that creates the mission. 
+    First-contact intelligent-life scenarios currently use `first_contact.return_to_space_program`."""
+    title: str
+    description: str
+    status: Literal['active', 'completed', 'failed', 'abandoned']
+    stepOrder: Literal['free', 'sequential']
+    metadata: Dict[Any, Any]
+    """Public mission metadata. Sector coordinates, when present, are exposed as player-relative coordinates under `sector.relative`; 
+    inhabited-planet names that would reveal absolute coordinates are replaced by a public label."""
+    startedAt: str
+    createdAt: str
+    updatedAt: str | None
+    steps: List[MissionStep]
+    createdByEvent: Dict[Any, Any] | None = None
+    """Public mission creation context. Sector coordinates, when present, are exposed as player-relative coordinates under `sector.relative`."""
+    completedAt: str | None = None
+    failedAt: str | None = None
+    abandonedAt: str | None = None
