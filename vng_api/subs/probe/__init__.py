@@ -3,6 +3,7 @@ from typing import TYPE_CHECKING
 
 from vng_api.subs.probe.mannies import ManniesSub
 from vng_api.subs.probe.missile import MissileSub
+from vng_api.subs.probe.sector import ProbeSectorSub
 from vng_api.types import ProbeType, OutOfRangeProbe, Probe, ProbeSummaryList, Vector, Movement
 
 if TYPE_CHECKING:
@@ -15,6 +16,7 @@ class ProbeSub(APISub):
 
     def __init__(self, client: "APIClient"):
         super().__init__(client)
+        self.sector: ProbeSectorSub = ProbeSectorSub(client)
         self.missile: MissileSub = MissileSub(client)
         self.mannies: ManniesSub = ManniesSub(client)
 

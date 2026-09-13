@@ -5,7 +5,7 @@ __all__ = ['Vector', 'Sector', 'SectorVisitHistory', 'SectorObservation', 'Secto
            'StorageContainerRules', 'ContainerKind', 'ContainerMeta', 'StorageContainer', 'ItemKind', 'Item', 'ResourceStockContainer',
            'CapacityUnit', 'ProbeInventory', 'ProbeSystems', 'ProbeNavigation', 'ProbeTerminalAlert', 'ProbeTerminalAlertAction',
            'ProbeSensorMode', 'ProbeExternalTank', 'MannyCargo', 'ResourceStock', 'ProbeStatus', 'ProbeSummary', 'ProbeSummaryList', 'RadiusUnit',
-           'ResourceType', 'Player', 'APIKey', 'Mineable', 'Printable', 'PrintResponse', 'MissileState']
+           'ResourceType', 'Player', 'APIKey', 'Mineable', 'Printable', 'PrintResponse', 'MissileState', 'ProbeSectorResponse']
 
 from dataclasses import dataclass, field
 from mashumaro import DataClassDictMixin
@@ -609,3 +609,12 @@ class MissileState(DataClassDictMixin):
     result: str | None = None
     actionId: str | None = None
     details: Dict[Any, Any] | None = None
+
+
+@dataclass
+class ProbeSectorResponse(DataClassDictMixin):
+    sector: SectorObservation
+    inventory: ProbeInventory
+
+    def __iter__(self):
+        return iter([self.sector, self.inventory])
