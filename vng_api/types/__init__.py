@@ -6,7 +6,8 @@ __all__ = ['Vector', 'Sector', 'SectorVisitHistory', 'SectorObservation', 'Secto
            'CapacityUnit', 'ProbeInventory', 'ProbeSystems', 'ProbeNavigation', 'ProbeTerminalAlert', 'ProbeTerminalAlertAction',
            'ProbeSensorMode', 'ProbeExternalTank', 'MannyCargo', 'ResourceStock', 'ProbeStatus', 'ProbeSummary', 'ProbeSummaryList', 'RadiusUnit',
            'ResourceType', 'Player', 'APIKey', 'Mineable', 'Printable', 'PrintResponse', 'MissileState', 'ProbeSectorResponse',
-           'AutonomousUnitObservationResponse', 'AutonomousUnitCarrier', 'AutonomousUnitObservation', 'Mission', 'MissionStep']
+           'AutonomousUnitObservationResponse', 'AutonomousUnitCarrier', 'AutonomousUnitObservation', 'Mission', 'MissionStep',
+           'MessageEndpoint', 'Message', 'MessageResponse', 'Pagination']
 
 from dataclasses import dataclass, field
 from mashumaro import DataClassDictMixin
@@ -680,3 +681,46 @@ class Mission(DataClassDictMixin):
     completedAt: str | None = None
     failedAt: str | None = None
     abandonedAt: str | None = None
+
+
+@dataclass
+class MessageEndpoint(DataClassDictMixin):
+    type: Literal['probe', 'planet', 'unknown']
+    id: str | int
+    """Numeric probe id for probe endpoints, opaque planet object id for planet endpoints, or opaque sender id for unknown endpoints. 
+    Planet ids must not be interpreted as coordinates."""
+    name: str
+    """Public endpoint label. Planet endpoint names that would reveal absolute coordinates are replaced by a public label; 
+    unknown endpoints may use a generic sender label."""
+    probeId: int | None = None
+    """Present when `type` is `probe`."""
+    planetId: str | None = None
+    """Present when `type` is `planet`."""
+
+
+@dataclass
+class Message(DataClassDictMixin):
+    id: int
+    sender: MessageEndpoint
+    recipient: MessageEndpoint
+    sector: Sector
+    body: str
+    status: Literal['unread', 'read']
+    readAt: str | None
+    createdAt: str
+    updatedAt: str | None
+
+
+@dataclass
+class Pagination(DataClassDictMixin):
+    limit: int
+    offset: int
+    count: int
+    total: int
+    hasMore: bool
+
+
+@dataclass
+class MessageResponse(DataClassDictMixin):
+    messages: List[Message]
+    pagination: Pagination
