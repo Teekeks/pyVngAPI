@@ -14,18 +14,19 @@ from mashumaro import DataClassDictMixin
 from typing import List, Dict, Any, Literal, Union
 
 
-ProbeModel = Literal['generic', 'deuterium_tanker']
-ProbeSensorMode = Literal['normal', 'degraded', 'blind']
-CapacityUnit = Literal['earth_container_equivalent']
-ContainerKind = Literal['probe', 'container']
-ItemKind = Literal['waypoint_bookmark', 'steel_bar', 'steel_plate', 'additional_container', 'micro_conductor', 'ceramic_insulator',
-                   'crystal_substrate', 'dopant_matrix', 'integrated_circuit', 'electric_motor', 'battery_pack', 'linear_actuator',
-                   'atomic_printer_part', 'deuterium_engine', 'solar_panel', 'scut_relay', 'scut_transit_beacon', 'thermal_protection_shell',
-                   'parachute_pack', 'descent_guidance_module', 'atmospheric_drop_kit', 'missile', 'manny']
-ProbeStatus = Literal['idle', 'preparing', 'accelerating', 'cruising', 'decelerating', 'orbiting', 'disabled', 'dead', 'trapped_by_black_hole']
-RadiusUnit = Literal['solar_radius', 'earth_radius', 'kilometer', 'astronomical_unit']
-ResourceType = Literal['deuterium', 'metals', 'ice', 'carbon_compounds']
-ObservedClass = Literal['suspected_missile', 'large_ship', 'ship']
+ProbeModel = Union[Literal['generic', 'deuterium_tanker'], str]
+ProbeSensorMode = Union[Literal['normal', 'degraded', 'blind'], str]
+CapacityUnit = Union[Literal['earth_container_equivalent'], str]
+ContainerKind = Union[Literal['probe', 'container'], str]
+ItemKind = Union[Literal['waypoint_bookmark', 'steel_bar', 'steel_plate', 'additional_container', 'micro_conductor', 'ceramic_insulator',
+                         'crystal_substrate', 'dopant_matrix', 'integrated_circuit', 'electric_motor', 'battery_pack', 'linear_actuator',
+                         'atomic_printer_part', 'deuterium_engine', 'solar_panel', 'scut_relay', 'scut_transit_beacon', 'thermal_protection_shell',
+                         'parachute_pack', 'descent_guidance_module', 'atmospheric_drop_kit', 'missile', 'manny'], str]
+ProbeStatus = Union[Literal['idle', 'preparing', 'accelerating', 'cruising', 'decelerating', 'orbiting',
+                            'disabled', 'dead', 'trapped_by_black_hole'], str]
+RadiusUnit = Union[Literal['solar_radius', 'earth_radius', 'kilometer', 'astronomical_unit', 'meter'], str]
+ResourceType = Union[Literal['deuterium', 'metals', 'ice', 'carbon_compounds'], str]
+ObservedClass = Union[Literal['suspected_missile', 'large_ship', 'ship'], str]
 Mineable = Union[ResourceType, str]
 Printable = Union[Literal['micro_conductor', 'ceramic_insulator', 'crystal_substrate',
                           'dopant_matrix', 'integrated_circuit', 'atomic_printer_part'], str]
@@ -142,20 +143,21 @@ class SectorObject(DataClassDictMixin):
     """Opaque object id. Clients must not parse coordinates from it. 
     For scut_relay objects this is the relay integer id serialized as a string; 
     pass it as an integer relayId to turn-on-relay or install-scut-transit-beacon."""
-    type: Literal['star', 'planet', 'asteroid', 'dust_cloud', 'black_hole', 'solar_system', 'manny', 'drifting_item', 'detached_container', 
-                  'deuterium_refuel_station', 'dormant_construct', 'scut_relay', 'missile']
-    name: str | None
+    summary: str
+    name: str | None = None
     """Public object label. Generated asteroids have a short content-based name such as Ice Deut 15ce. 
     For inhabited planets, generated or debug names that would reveal absolute coordinates are replaced by a player-relative label."""
+    type: Literal['star', 'planet', 'asteroid', 'dust_cloud', 'black_hole', 'solar_system', 'manny', 'drifting_item', 'detached_container',
+                  'deuterium_refuel_station', 'dormant_construct', 'scut_relay', 'missile'] | str | None = None
     estimated: bool | None = None
     mass: float | None = None
-    massUnit: Literal['solar_mass', 'earth_mass'] | None = None
+    massUnit: Literal['solar_mass', 'earth_mass', 'kilogram'] | str | None = None
     """Unit used by mass when present. Stars, black holes and dust clouds use solar_mass; planets and asteroids use earth_mass."""
     radius: float | None = None
     radiusUnit: RadiusUnit | None = None
     """Unit used by radius when present. Stars use solar_radius; planets and asteroids use earth_radius; 
     black holes use kilometer; solar systems and dust clouds use astronomical_unit."""
-    dangerLevel: Literal['low', 'moderate', 'extreme'] | None = None
+    dangerLevel: Literal['low', 'moderate', 'extreme'] | str | None = None
     starCount: int | None = None
     """Present on solar systems."""
     planetCount: int | None = None
@@ -175,7 +177,7 @@ class SectorObject(DataClassDictMixin):
     """Present on asteroids; generator composition class such as iron, silicate, carbonaceous, ice or rare_metals."""
     motorized: bool | None = None
     """Present on asteroid objects; true once Distributed Thrust Anchoring propulsion is installed."""
-    motorFuelStatus: Literal['full', 'empty'] | None = None
+    motorFuelStatus: Literal['full', 'empty'] | str | None = None
     """Present only on motorized asteroids."""
     capturedByObjectId: str | None = None
     """Present when the asteroid is captured by another local celestial object."""
@@ -186,7 +188,7 @@ class SectorObject(DataClassDictMixin):
     # TODO: trajectory (#/components/schemas/AsteroidTrajectory)
     launcherKind: Literal['probe', 'others_ship'] | None = None
     """Present only for moving missile objects."""
-    targetKind: Literal['probe', 'others_ship', 'others_auxiliary', 'manny', 'missile', 'motorized_asteroid'] | None = None
+    targetKind: Literal['probe', 'others_ship', 'others_auxiliary', 'manny', 'missile', 'motorized_asteroid'] | str | None = None
     """Present only for moving missile objects."""
     targetId: str | None = None
     """Opaque public target id, present only for moving missile objects."""
@@ -222,7 +224,7 @@ class SectorObject(DataClassDictMixin):
     """Present only for drifting item stacks."""
     containerSpace: float | None = None
     """Per-item storage space for drifting item stacks."""
-    mode: Literal['[drifting', 'hidden_on_asteroid'] | None = None
+    mode: Literal['[drifting', 'hidden_on_asteroid'] | str | None = None
     """Present only for detached containers. Hidden containers are included only for players who have discovered them."""
     targetObjectId: str | None = None
     """Present for detached containers, null unless the container is attached to another sector object."""
@@ -233,14 +235,14 @@ class SectorObject(DataClassDictMixin):
     """Present only for deuterium refuel stations; id of the planet that placed the station in orbit."""
     planetName: str | None = None
     """Present only for deuterium refuel stations; public name of the planet that placed the station."""
-    apparentOrigin: Literal['unknown_non_natural'] | None = None
+    apparentOrigin: Literal['unknown_non_natural'] | str | None = None
     """Present only for dormant_construct objects."""
-    activityStatus: Literal['dormant'] | None = None
+    activityStatus: Literal['dormant'] | str | None = None
     """Present only for dormant_construct objects."""
-    knownFunction: Literal['unknown'] | None = None
+    knownFunction: Literal['unknown'] | str | None = None
     """Present only for dormant_construct objects; 
     detailed scans cannot determine whether the structure is a vessel, factory, or another kind of utility."""
-    status: Literal['off', 'on', 'moving'] | None = None
+    status: Literal['off', 'on', 'moving'] | str | None = None
     """Relay activation state for SCUT relays, or `moving` for an in-flight missile."""
     createdByProbeId: int | None = None
     """Present only for SCUT relay objects."""
@@ -309,16 +311,16 @@ class SectorObservationProbeDistance(DataClassDictMixin):
 class SectorObservation(DataClassDictMixin):
     relativeCoordinates: Vector
     distance: int
-    knowledgeLevel: Literal['detailed', 'neighbor_scan', 'distant_scan', 'long_range_estimation']
+    knowledgeLevel: Literal['detailed', 'neighbor_scan', 'distant_scan', 'long_range_estimation'] | str
     confidence: float
     scan: SectorScan
-    distances: List[SectorObservationProbeDistance]
-    sensorMode: Literal['normal', 'degraded', 'blind']
-    dataFreshness: Literal['live', 'degraded_live', 'historical', 'unavailable']
+    sensorMode: Literal['normal', 'degraded', 'blind'] | str
+    dataFreshness: Literal['live', 'degraded_live', 'historical', 'unavailable'] | str
+    distances: List[SectorObservationProbeDistance] | None = None
     objects: List[SectorObject] | None = None
     probes: List[SectorProbePresence] | None = None
     scutNetworks: List[ScutNetwork] | None = None
-    scutCoverageStatus: Literal['covered', 'uncovered', 'unknown'] | None = None
+    scutCoverageStatus: Literal['covered', 'uncovered', 'unknown'] | str | None = None
     estimatedObjects: Dict[Any, Any] | None = None
     possibleObjects: List[str] | None = None
     navigationalRisk: str | None = None
@@ -327,8 +329,8 @@ class SectorObservation(DataClassDictMixin):
 
 @dataclass
 class MannyLocation(DataClassDictMixin):
-    type: Literal['probe', 'sector']
-    sector: Sector
+    type: Literal['probe', 'sector'] | str
+    sector: Sector | None = None
 
 
 @dataclass
@@ -340,7 +342,7 @@ class Manny(DataClassDictMixin):
     taskProgressPercent: float
     taskEstimatedEndTime: str
     taskStartTime: str
-    task: Dict | None
+    task: Dict | None | List
 
 
 @dataclass
@@ -391,7 +393,7 @@ class Fuel(DataClassDictMixin):
 
 @dataclass
 class Movement(DataClassDictMixin):
-    status: ProbeStatus
+    status: Literal['preparing', 'accelerating', 'cruising', 'decelerating', 'arrived', 'failed', 'destroyed'] | str
     origin: Vector
     target: Vector
     distance: int
@@ -399,7 +401,7 @@ class Movement(DataClassDictMixin):
     """Fixed deuterium-point cost reserved at departure for the complete trip, including deceleration."""
     startedAt: str
     arrivalAt: str
-    phase: Literal['idle', 'preparing', 'accelerating', 'cruising', 'decelerating', 'arrived', 'failed', 'destroyed'] | None = None
+    phase: Literal['idle', 'preparing', 'accelerating', 'cruising', 'decelerating', 'arrived', 'failed', 'destroyed'] | str | None = None
     secondsRemaining: int | None = None
     sensorMode: ProbeSensorMode | None = None
     estimatedVelocityC: float | None = None
@@ -441,8 +443,8 @@ class ProbeTerminalAlertAction(DataClassDictMixin):
 
 @dataclass
 class ProbeTerminalAlert(DataClassDictMixin):
-    type: Literal['mind_snapshot_reassignment_available']
-    severity: Literal['critical']
+    type: Literal['mind_snapshot_reassignment_available'] | str
+    severity: Literal['critical'] | str
     title: str
     message: str
     """Public alert text. Sector coordinates in messages are expressed relative to the player reference frame and must not expose 
@@ -453,7 +455,7 @@ class ProbeTerminalAlert(DataClassDictMixin):
 @dataclass
 class ProbeExternalTank(DataClassDictMixin):
     id: str
-    type: Literal['deuterium']
+    type: Literal['deuterium'] | str
     name: str
     fillPercent: float
     external: bool
@@ -465,7 +467,7 @@ class ContainerMeta(DataClassDictMixin):
     id: str
     kind: ContainerKind
     label: str
-    sortOder: int
+    sortOder: int | None = None
 
 
 @dataclass
@@ -494,7 +496,7 @@ class ResourceStockContainer(DataClassDictMixin):
 @dataclass
 class ResourceStock(DataClassDictMixin):
     id: str
-    type: Literal['metals', 'ice', 'carbon_compounds']
+    type: Literal['metals', 'ice', 'carbon_compounds'] | str
     name: str
     amount: float
     containerSpace: float
@@ -514,12 +516,12 @@ class StorageContainer(DataClassDictMixin):
     id: str
     kind: ContainerKind
     label: str
-    sortOder: int
     capacity: float
     usedCapacity: float
     freeCapacity: float
     capacityUnit: CapacityUnit
     rules: StorageContainerRules
+    sortOder: int | None = None
 
 
 @dataclass
@@ -625,16 +627,16 @@ class ProbeSectorResponse(DataClassDictMixin):
 @dataclass
 class AutonomousUnitCarrier(DataClassDictMixin):
     id: str
-    kind: Literal['probe', 'others_ship']
+    kind: Literal['probe', 'others_ship'] | str
 
 
 @dataclass
 class AutonomousUnitObservation(DataClassDictMixin):
     id: str
     """Opaque public identifier of the deployed unit."""
-    kind: Literal['manny', 'others_auxiliary']
+    kind: Literal['manny', 'others_auxiliary'] | str
     carrier: AutonomousUnitCarrier
-    spatialState: Literal['moving_to_sector_object', 'returning_to_carrier', 'drifting', 'landed_on_sector_object']
+    spatialState: Literal['moving_to_sector_object', 'returning_to_carrier', 'drifting', 'landed_on_sector_object'] | str
 
 
 @dataclass
@@ -650,7 +652,7 @@ class MissionStep(DataClassDictMixin):
     sortOrder: int
     tite: str
     description: str
-    status: Literal['pending', 'completed', 'failed', 'skipped']
+    status: Literal['pending', 'completed', 'failed', 'skipped'] | str
     metadata: Dict[Any, Any]
     createdAt: str
     updatedAt: str | None = None
@@ -667,8 +669,8 @@ class Mission(DataClassDictMixin):
     First-contact intelligent-life scenarios currently use `first_contact.return_to_space_program`."""
     title: str
     description: str
-    status: Literal['active', 'completed', 'failed', 'abandoned']
-    stepOrder: Literal['free', 'sequential']
+    status: Literal['active', 'completed', 'failed', 'abandoned'] | str
+    stepOrder: Literal['free', 'sequential'] | str
     metadata: Dict[Any, Any]
     """Public mission metadata. Sector coordinates, when present, are exposed as player-relative coordinates under `sector.relative`; 
     inhabited-planet names that would reveal absolute coordinates are replaced by a public label."""
@@ -685,7 +687,7 @@ class Mission(DataClassDictMixin):
 
 @dataclass
 class MessageEndpoint(DataClassDictMixin):
-    type: Literal['probe', 'planet', 'unknown']
+    type: Literal['probe', 'planet', 'unknown'] | str
     id: str | int
     """Numeric probe id for probe endpoints, opaque planet object id for planet endpoints, or opaque sender id for unknown endpoints. 
     Planet ids must not be interpreted as coordinates."""
@@ -705,7 +707,7 @@ class Message(DataClassDictMixin):
     recipient: MessageEndpoint
     sector: Sector
     body: str
-    status: Literal['unread', 'read']
+    status: Literal['unread', 'read'] | str
     readAt: str | None
     createdAt: str
     updatedAt: str | None
