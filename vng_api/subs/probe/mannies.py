@@ -223,5 +223,20 @@ class ManniesSub(APISub):
             await self.client.issue_cache_update(data.data.inventory)
         return data
 
+    async def ignite_missile(self, pid: int, mid: str, target_id: str, missile_item_id: str | None = None) -> APIResponse[None]:
+        """Starts a one-minute missile preparation with the selected embarked Manny.
+        When missileItemId is omitted, the first available missile in the probe inventory is used.
+
+        :param pid: Probe ID
+        :param mid: The ID of the manny to carry out the task
+        :param target_id: The ID of the target to fire on
+        :param missile_item_id: The optional ID of the missile to fire. If not set use the first available.
+        """
+        payload = optional({
+            'targetId': target_id,
+            'missileItemId': missile_item_id,
+        }, ('missileItemId',))
+        return await self.client.api_call('post', f'probe/{pid}/mannies/{mid}/ignite_missile', payload, None)
+
     def tasks(self, pid: int):
         return MannyTaskManager(self.client, pid)
