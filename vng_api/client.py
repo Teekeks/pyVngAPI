@@ -62,7 +62,7 @@ class APIClient:
             error_code = error_message = data = None
             self.stats.update_from_response(ret)
             match ret.status:
-                case 200 | 201:
+                case 200 | 201 | 202:
                     raw_data = await ret.json()
                     data = data_transform(raw_data) if data_transform is not None else raw_data
                     success = True
