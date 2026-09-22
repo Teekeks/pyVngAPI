@@ -23,7 +23,10 @@ class ProbeSub(APISub):
         self.manny: MannySub = MannySub(client)
 
     async def get(self, pid: int) -> APIResponse[ProbeType]:
-        """Get a Neumann probe by id"""
+        """Get a Neumann probe by id
+
+        :param pid: Probe ID
+        """
         return await self.client.api_call('get', f'probe/{pid}', None,
                                           lambda inp: OutOfRangeProbe.from_dict(inp['probe']) if inp['probe']['status'] == 'out_of_scut_range'
                                           else Probe.from_dict(inp['probe']))
