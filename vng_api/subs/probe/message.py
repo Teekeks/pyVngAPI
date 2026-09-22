@@ -55,3 +55,14 @@ class MessageSub(APISub):
             'body': body,
         }
         return await self.client.api_call('post', f'probe/{pid}/messages', param, lambda inp: Message.from_dict(inp['message']))
+
+    async def read(self, pid: int, message_id: str) -> APIResponse[Message]:
+        """Mark a received probe message as read.
+
+        Only the recipient probe can mark a message as read. Repeating the call on an already-read message is safe and returns the message unchanged.
+
+        :param pid: Probe ID
+        :param message_id: Message ID
+        """
+        return await self.client.api_call('patch', f'probe/{pid}/messages/{message_id}/read', None,
+                                          lambda inp: Message.from_dict(inp['message']))
