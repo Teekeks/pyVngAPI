@@ -1,7 +1,7 @@
 from vng_api.base import APISub, APIResponse
 from typing import TYPE_CHECKING
 
-from vng_api.subs.probe.mannies import ManniesSub
+from vng_api.subs.probe.manny import MannySub
 from vng_api.subs.probe.missile import MissileSub
 from vng_api.subs.probe.sector import ProbeSectorSub
 from vng_api.subs.probe.message import MessageSub
@@ -20,7 +20,7 @@ class ProbeSub(APISub):
         self.sector: ProbeSectorSub = ProbeSectorSub(client)
         self.missile: MissileSub = MissileSub(client)
         self.message: MessageSub = MessageSub(client)
-        self.mannies: ManniesSub = ManniesSub(client)
+        self.manny: MannySub = MannySub(client)
 
     async def get(self, pid: int) -> APIResponse[ProbeType]:
         """Get a Neumann probe by id"""

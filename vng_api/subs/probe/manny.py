@@ -7,7 +7,7 @@ from vng_api.types import Manny, Mineable, Printable, PrintResponse
 if TYPE_CHECKING:
     from vng_api.client import APIClient
 
-__all__ = ['MannyTaskManager', 'ManniesSub']
+__all__ = ['MannyTaskManager', 'MannySub']
 
 
 class MannyTaskManager(APISub):
@@ -157,7 +157,7 @@ class MannyTaskManager(APISub):
         await self._add_task(mid, 'ignite_missile', payload)
 
 
-class ManniesSub(APISub):
+class MannySub(APISub):
 
     async def get(self, pid: int, mid: str) -> APIResponse[Manny]:
         """Returns the selected Manny's last persisted state with the same visibility and task-detail rules as the Manny list endpoint.
