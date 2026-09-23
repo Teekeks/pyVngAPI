@@ -3,6 +3,7 @@ from typing import TYPE_CHECKING
 
 from vng_api.subs.probe.manny import MannySub
 from vng_api.subs.probe.missile import MissileSub
+from vng_api.subs.probe.scut_network import SCUTNetworkSub
 from vng_api.subs.probe.sector import ProbeSectorSub
 from vng_api.subs.probe.message import MessageSub
 from vng_api.types import ProbeType, OutOfRangeProbe, Probe, ProbeSummaryList, Vector, Movement
@@ -20,6 +21,7 @@ class ProbeSub(APISub):
         self.sector: ProbeSectorSub = ProbeSectorSub(client)
         self.missile: MissileSub = MissileSub(client)
         self.message: MessageSub = MessageSub(client)
+        self.scut_network: SCUTNetworkSub = SCUTNetworkSub(client)
         self.manny: MannySub = MannySub(client)
 
     async def get(self, pid: int) -> APIResponse[ProbeType]:

@@ -7,7 +7,7 @@ __all__ = ['Vector', 'Sector', 'SectorVisitHistory', 'SectorObservation', 'Secto
            'ProbeSensorMode', 'ProbeExternalTank', 'MannyCargo', 'ResourceStock', 'ProbeStatus', 'ProbeSummary', 'ProbeSummaryList', 'RadiusUnit',
            'ResourceType', 'Player', 'APIKey', 'Mineable', 'Printable', 'PrintResponse', 'MissileState', 'ProbeSectorResponse',
            'AutonomousUnitObservationResponse', 'AutonomousUnitCarrier', 'AutonomousUnitObservation', 'Mission', 'MissionStep',
-           'MessageEndpoint', 'Message', 'MessageResponse', 'Pagination']
+           'MessageEndpoint', 'Message', 'MessageResponse', 'Pagination', 'ScutNetworkProbe']
 
 from dataclasses import dataclass, field
 from mashumaro import DataClassDictMixin
@@ -279,14 +279,22 @@ class ScutRelay(DataClassDictMixin):
 
 
 @dataclass
+class ScutNetworkProbe(DataClassDictMixin):
+    id: int
+    name: str
+    sector: Sector
+
+
+@dataclass
 class ScutNetwork(DataClassDictMixin):
     id: int
     name: str
-    createdAt: str | None = None
-    updatedAt: str | None = None
-    relayCount: int | None = None
-    coveredSectorCount: int | None = None
-    relays: List[ScutRelay] | None = None
+    createdAt: str
+    updatedAt: str
+    relayCount: int
+    coveredSectorCount: int
+    relays: List[ScutRelay]
+    probes: List[ScutNetworkProbe]
 
 
 @dataclass
@@ -319,7 +327,7 @@ class SectorObservation(DataClassDictMixin):
     distances: List[SectorObservationProbeDistance] | None = None
     objects: List[SectorObject] | None = None
     probes: List[SectorProbePresence] | None = None
-    scutNetworks: List[ScutNetwork] | None = None
+    scutNetworks: List[ScutNetworkReference] | None = None
     scutCoverageStatus: Literal['covered', 'uncovered', 'unknown'] | str | None = None
     estimatedObjects: Dict[Any, Any] | None = None
     possibleObjects: List[str] | None = None
