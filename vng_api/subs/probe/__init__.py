@@ -1,6 +1,7 @@
 from vng_api.base import APISub, APIResponse
 from typing import TYPE_CHECKING
 
+from vng_api.subs.probe.improvement import ImprovementSub
 from vng_api.subs.probe.manny import MannySub
 from vng_api.subs.probe.missile import MissileSub
 from vng_api.subs.probe.scut_network import SCUTNetworkSub
@@ -20,6 +21,7 @@ class ProbeSub(APISub):
         super().__init__(client)
         self.sector: ProbeSectorSub = ProbeSectorSub(client)
         self.missile: MissileSub = MissileSub(client)
+        self.improvement: ImprovementSub = ImprovementSub(client)
         self.message: MessageSub = MessageSub(client)
         self.scut_network: SCUTNetworkSub = SCUTNetworkSub(client)
         self.manny: MannySub = MannySub(client)

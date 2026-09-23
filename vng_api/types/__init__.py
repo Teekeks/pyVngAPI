@@ -7,7 +7,8 @@ __all__ = ['Vector', 'Sector', 'SectorVisitHistory', 'SectorObservation', 'Secto
            'ProbeSensorMode', 'ProbeExternalTank', 'MannyCargo', 'ResourceStock', 'ProbeStatus', 'ProbeSummary', 'ProbeSummaryList', 'RadiusUnit',
            'ResourceType', 'Player', 'APIKey', 'Mineable', 'Printable', 'PrintResponse', 'MissileState', 'ProbeSectorResponse',
            'AutonomousUnitObservationResponse', 'AutonomousUnitCarrier', 'AutonomousUnitObservation', 'Mission', 'MissionStep',
-           'MessageEndpoint', 'Message', 'MessageResponse', 'Pagination', 'ScutNetworkProbe']
+           'MessageEndpoint', 'Message', 'MessageResponse', 'Pagination', 'ScutNetworkProbe', 'ProbeImprovement', 'ProbeImprovementId',
+           'ProbeImprovementIngredient', 'ObservedClass']
 
 from dataclasses import dataclass, field
 from mashumaro import DataClassDictMixin
@@ -30,6 +31,8 @@ ObservedClass = Union[Literal['suspected_missile', 'large_ship', 'ship'], str]
 Mineable = Union[ResourceType, str]
 Printable = Union[Literal['micro_conductor', 'ceramic_insulator', 'crystal_substrate',
                           'dopant_matrix', 'integrated_circuit', 'atomic_printer_part'], str]
+ProbeImprovementId = Union[Literal['deuterium_compression', 'reinforced_container_couplings',
+                                   'distributed_thrust_anchoring', 'anatiform_asteroid_sculpting'], str]
 
 
 @dataclass
@@ -734,3 +737,30 @@ class Pagination(DataClassDictMixin):
 class MessageResponse(DataClassDictMixin):
     messages: List[Message]
     pagination: Pagination
+
+
+@dataclass
+class ProbeImprovementIngredient(DataClassDictMixin):
+    type: str
+    quantity: int | float
+    unit: str
+    kind: Literal['item', 'resource']
+
+
+@dataclass
+class ProbeImprovement(DataClassDictMixin):
+    id: ProbeImprovementId
+    name: str
+    description: str
+    available: bool
+    """Whether the selected probe owner's player knows this improvement blueprint."""
+    done: bool
+    """Whether the improvement effect has already been installed on the selected probe."""
+    installableOnProbe: bool
+    """Whether this blueprint describes an improvement installed on probes. 
+    False for action blueprints such as distributed_thrust_anchoring and anatiform_asteroid_sculpting."""
+    durationSeconds: int
+    ingredients: List[ProbeImprovementIngredient]
+    effects: Dict[Any, Any]
+    createdAt: str | None = None
+    updatedAt: str | None = None
