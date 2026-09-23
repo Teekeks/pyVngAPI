@@ -12,12 +12,12 @@ import asyncio
 async def main():
     client = APIClient('my_token')
     # get all mannies of the probe with ID 420
-    ret, mannies = await client.probe.mannies.get_all(420)
+    ret, mannies = await client.probe.manny.get_all(420)
     # check if the API call was successfull
     if not ret.success:
         raise Exception(f'Failed to get mannies of probe: {ret.error_code}: {ret.error_message}')
     # create context manager for mannie tasks on probe 420
-    tasks = client.probe.mannies.tasks(420)
+    tasks = client.probe.manny.tasks(420)
     async with tasks:
         # queue the crafting task for each manny
         for manny in mannies.values():
