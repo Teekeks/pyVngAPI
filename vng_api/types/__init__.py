@@ -9,7 +9,9 @@ __all__ = ['Vector', 'Sector', 'SectorVisitHistory', 'SectorObservation', 'Secto
            'AutonomousUnitObservationResponse', 'AutonomousUnitCarrier', 'AutonomousUnitObservation', 'Mission', 'MissionStep',
            'MessageEndpoint', 'Message', 'MessageResponse', 'Pagination', 'ScutNetworkProbe', 'ProbeImprovement', 'ProbeImprovementId',
            'ProbeImprovementIngredient', 'ObservedClass', 'BlueprintReference', 'ProbeReference', 'ProbeImprovementBlueprintShareResponse',
-           'InventoryBrief', 'StorageContainerInventoryResponse', 'CraftingReservationResponse', 'CraftingReassignment']
+           'InventoryBrief', 'StorageContainerInventoryResponse', 'CraftingReservationResponse', 'CraftingReassignment', 'ProbeAlertResponse',
+           'Alert', 'AlertDataBlueprint', 'AlertDataInstanceSwitch', 'AlertDataContainer', 'AlertDataObject', 'AlertDataReport', 'AlertDataPlanet',
+           'AlertDataRisk', 'AlertDataProbeDestroyed', 'AlertRules', 'AlertType', 'ProbeDestroyedReason', 'ProbeDamageWarningRule', 'MessageStatus']
 
 from dataclasses import dataclass, field
 from mashumaro import DataClassDictMixin
@@ -35,6 +37,11 @@ Printable = Union[Literal['micro_conductor', 'ceramic_insulator', 'crystal_subst
                           'dopant_matrix', 'integrated_circuit', 'atomic_printer_part'], str]
 ProbeImprovementId = Union[Literal['deuterium_compression', 'reinforced_container_couplings',
                                    'distributed_thrust_anchoring', 'anatiform_asteroid_sculpting'], str]
+AlertType = Union[Literal['storage_container_break', 'intelligent_life', 'sector_object_detected', 'manny_report', 'anomaly_detected',
+                          'mind_snapshot_transferred', 'probe_destroyed', 'asteroid_trajectory', 'blueprint_shared', 'others_presence',
+                          'others_weapon', 'others_harvest_traces'], str]
+MessageStatus = Union[Literal['unread', 'read'] | str]
+ProbeDestroyedReason = Union[Literal['black_hole_trap', 'movement_collision'], str]
 
 
 @dataclass
@@ -722,7 +729,7 @@ class Message(DataClassDictMixin):
     recipient: MessageEndpoint
     sector: Sector
     body: str
-    status: Literal['unread', 'read']
+    status: MessageStatus
     readAt: datetime | None
     createdAt: datetime
     updatedAt: datetime | None
@@ -816,3 +823,108 @@ class CraftingReservationResponse(DataClassDictMixin):
     reassignmentCount: int
     reassignments: List[CraftingReassignment]
 
+
+@dataclass
+class ProbeDamageWarningRule(DataClassDictMixin):
+    type: Literal['storage_container_break'] | str
+    startsAtAdditionalContainers: int
+    maximumRiskPercent: int
+    message: str
+
+
+@dataclass
+class AlertRules(DataClassDictMixin):
+    storageContainerBreak: ProbeDamageWarningRule
+
+
+@dataclass
+class AlertDataBlueprint(DataClassDictMixin):
+    blueprintId: ProbeImprovementId
+    recipientProbe: ProbeReference
+
+
+@dataclass
+class AlertDataProbeDestroyed(DataClassDictMixin):
+    probeId: int
+    reason: ProbeDestroyedReason
+
+
+@dataclass
+class AlertDataInstanceSwitch(DataClassDictMixin):
+    previousProbeId: int
+    reason: ProbeDestroyedReason
+
+
+@dataclass
+class AlertDataReport(DataClassDictMixin):
+    title: str
+    objectId: str | None
+    objectType: str
+    objectLabel: str
+
+
+@dataclass
+class AlertDataObject(DataClassDictMixin):
+    id: str
+    type: str
+    label: str
+    resourceTypes: List[ResourceType]
+
+
+@dataclass
+class AlertDataPlanet(DataClassDictMixin):
+    id: str
+    name: str | None
+
+
+@dataclass
+class AlertDataRisk(DataClassDictMixin):
+    percent: int
+    addicionalContainerCount: int
+    ruleStartsAtAdditionalContainers: int | None = None
+
+
+@dataclass
+class AlertDataContainer(DataClassDictMixin):
+    id: str
+    label: str
+    objectId: str
+
+
+@dataclass
+class Alert(DataClassDictMixin):
+    id: int
+    type: AlertType
+    status: MessageStatus
+    message: str
+    illustrationImageUrl: str | None
+    phase: Literal['acceleration_end', 'deceleration_start', 'arrival', 'detection', 'manny_report', 'instance_switch', 'probe_loss', 'ignition',
+                   'blueprint_share', 'weapon', 'weapon_targeted', 'weapon_result', 'weapon_damage'] | str
+    scheduledAt: datetime
+    createdAt: datetime
+    updatedAt: datetime | None
+    readAt: datetime | None
+    resolvedAt: datetime | None
+    sector: Sector
+    container: AlertDataContainer | None = None
+    """Present for `storage_container_break` alerts."""
+    risk: AlertDataRisk | None = None
+    """Present for `storage_container_break` alerts."""
+    planet: AlertDataPlanet | None = None
+    """Present for `intelligent_life` alerts."""
+    object: AlertDataObject | None = None
+    """Present for `sector_object_detected` alerts."""
+    report: AlertDataReport | None = None
+    """Present for `manny_report` alerts."""
+    instanceSwitch: AlertDataInstanceSwitch | None = None
+    """Present for `mind_snapshot_transferred` alerts."""
+    destroyedProbe: AlertDataProbeDestroyed | None = None
+    """Present for `probe_destroyed` alerts."""
+    blueprintShare: AlertDataBlueprint | None = None
+    """Present for `blueprint_shared` alerts."""
+
+
+@dataclass
+class ProbeAlertResponse(DataClassDictMixin):
+    alerts: List[Alert]
+    rules: AlertRules
