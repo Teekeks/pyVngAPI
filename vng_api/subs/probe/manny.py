@@ -2,7 +2,7 @@ from vng_api.helper.internal import optional
 from vng_api.base import APISub, APIBatchResult, APIResponse
 from typing import TYPE_CHECKING, List, Dict, Any, Iterable, Literal
 
-from vng_api.types import Manny, Mineable, Printable, PrintResponse
+from vng_api.types import Manny, Printable, PrintResponse, ResourceType
 
 if TYPE_CHECKING:
     from vng_api.client import APIClient
@@ -56,7 +56,7 @@ class MannyTaskManager(APISub):
     async def mine(self,
                    mid: str,
                    target_id: str,
-                   resources: Iterable[Mineable],
+                   resources: Iterable[ResourceType],
                    target_amount: float,
                    target_container: str | None = None):
         payload = optional({

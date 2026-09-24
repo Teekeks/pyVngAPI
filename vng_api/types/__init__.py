@@ -5,7 +5,7 @@ __all__ = ['Vector', 'Sector', 'SectorVisitHistory', 'SectorObservation', 'Secto
            'StorageContainerRules', 'ContainerKind', 'ContainerMeta', 'StorageContainer', 'ItemKind', 'Item', 'ResourceStockContainer',
            'CapacityUnit', 'ProbeInventory', 'ProbeSystems', 'ProbeNavigation', 'ProbeTerminalAlert', 'ProbeTerminalAlertAction',
            'ProbeSensorMode', 'ProbeExternalTank', 'MannyCargo', 'ResourceStock', 'ProbeStatus', 'ProbeSummary', 'ProbeSummaryList', 'RadiusUnit',
-           'ResourceType', 'Player', 'APIKey', 'Mineable', 'Printable', 'PrintResponse', 'MissileState', 'ProbeSectorResponse',
+           'ResourceType', 'Player', 'APIKey', 'Printable', 'PrintResponse', 'MissileState', 'ProbeSectorResponse',
            'AutonomousUnitObservationResponse', 'AutonomousUnitCarrier', 'AutonomousUnitObservation', 'Mission', 'MissionStep',
            'MessageEndpoint', 'Message', 'MessageResponse', 'Pagination', 'ScutNetworkProbe', 'ProbeImprovement', 'ProbeImprovementId',
            'ProbeImprovementIngredient', 'ObservedClass', 'BlueprintReference', 'ProbeReference', 'ProbeImprovementBlueprintShareResponse',
@@ -19,29 +19,29 @@ from typing import List, Dict, Any, Literal, Union
 from datetime import datetime
 
 
-ProbeModel = Union[Literal['generic', 'deuterium_tanker'], str]
-ProbeSensorMode = Union[Literal['normal', 'degraded', 'blind'], str]
-CapacityUnit = Union[Literal['earth_container_equivalent'], str]
-ContainerKind = Union[Literal['probe', 'container'], str]
-ItemKind = Union[Literal['waypoint_bookmark', 'steel_bar', 'steel_plate', 'additional_container', 'micro_conductor', 'ceramic_insulator',
-                         'crystal_substrate', 'dopant_matrix', 'integrated_circuit', 'electric_motor', 'battery_pack', 'linear_actuator',
-                         'atomic_printer_part', 'deuterium_engine', 'solar_panel', 'scut_relay', 'scut_transit_beacon', 'thermal_protection_shell',
-                         'parachute_pack', 'descent_guidance_module', 'atmospheric_drop_kit', 'missile', 'manny'], str]
-ProbeStatus = Union[Literal['idle', 'preparing', 'accelerating', 'cruising', 'decelerating', 'orbiting',
-                            'disabled', 'dead', 'trapped_by_black_hole'], str]
-RadiusUnit = Union[Literal['solar_radius', 'earth_radius', 'kilometer', 'astronomical_unit', 'meter'], str]
-ResourceType = Union[Literal['deuterium', 'metals', 'ice', 'carbon_compounds'], str]
-ObservedClass = Union[Literal['suspected_missile', 'large_ship', 'ship'], str]
-Mineable = Union[ResourceType, str]
-Printable = Union[Literal['micro_conductor', 'ceramic_insulator', 'crystal_substrate',
-                          'dopant_matrix', 'integrated_circuit', 'atomic_printer_part'], str]
-ProbeImprovementId = Union[Literal['deuterium_compression', 'reinforced_container_couplings',
-                                   'distributed_thrust_anchoring', 'anatiform_asteroid_sculpting'], str]
-AlertType = Union[Literal['storage_container_break', 'intelligent_life', 'sector_object_detected', 'manny_report', 'anomaly_detected',
-                          'mind_snapshot_transferred', 'probe_destroyed', 'asteroid_trajectory', 'blueprint_shared', 'others_presence',
-                          'others_weapon', 'others_harvest_traces'], str]
-MessageStatus = Union[Literal['unread', 'read'] | str]
-ProbeDestroyedReason = Union[Literal['black_hole_trap', 'movement_collision'], str]
+type ProbeModel = Union[Literal['generic', 'deuterium_tanker'], str]
+type ProbeSensorMode = Union[Literal['normal', 'degraded', 'blind'], str]
+type CapacityUnit = Union[Literal['earth_container_equivalent'], str]
+type ContainerKind = Union[Literal['probe', 'container'], str]
+type ItemKind = Union[Literal['waypoint_bookmark', 'steel_bar', 'steel_plate', 'additional_container', 'micro_conductor', 'ceramic_insulator',
+                              'crystal_substrate', 'dopant_matrix', 'integrated_circuit', 'electric_motor', 'battery_pack', 'linear_actuator',
+                              'atomic_printer_part', 'deuterium_engine', 'solar_panel', 'scut_relay', 'scut_transit_beacon',
+                              'thermal_protection_shell', 'parachute_pack', 'descent_guidance_module', 'atmospheric_drop_kit', 'missile', 'manny'],
+                      str]
+type ProbeStatus = Union[Literal['idle', 'preparing', 'accelerating', 'cruising', 'decelerating', 'orbiting',
+                                 'disabled', 'dead', 'trapped_by_black_hole'], str]
+type RadiusUnit = Union[Literal['solar_radius', 'earth_radius', 'kilometer', 'astronomical_unit', 'meter'], str]
+type ResourceType = Union[Literal['deuterium', 'metals', 'ice', 'carbon_compounds'], str]
+type ObservedClass = Union[Literal['suspected_missile', 'large_ship', 'ship'], str]
+type Printable = Union[Literal['micro_conductor', 'ceramic_insulator', 'crystal_substrate',
+                               'dopant_matrix', 'integrated_circuit', 'atomic_printer_part'], str]
+type ProbeImprovementId = Union[Literal['deuterium_compression', 'reinforced_container_couplings',
+                                        'distributed_thrust_anchoring', 'anatiform_asteroid_sculpting'], str]
+type AlertType = Union[Literal['storage_container_break', 'intelligent_life', 'sector_object_detected', 'manny_report', 'anomaly_detected',
+                               'mind_snapshot_transferred', 'probe_destroyed', 'asteroid_trajectory', 'blueprint_shared', 'others_presence',
+                               'others_weapon', 'others_harvest_traces'], str]
+type MessageStatus = Union[Literal['unread', 'read'], str]
+type ProbeDestroyedReason = Union[Literal['black_hole_trap', 'movement_collision'], str]
 
 
 @dataclass
