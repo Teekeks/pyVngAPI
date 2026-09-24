@@ -63,9 +63,7 @@ class ProbeSub(APISub):
         :param z: Target z coordinate
         :raises ValueError: if vector is None and at least one of x, y, z is also None"""
         if vector is not None:
-            x = vector.x
-            y = vector.y
-            z = vector.z
+            x, y, z = vector
         else:
             if x is None or y is None or z is None:
                 raise ValueError('x and y and z or vector must be specified')
