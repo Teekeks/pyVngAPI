@@ -1,7 +1,7 @@
 from typing import List
 
 from vng_api.base import APISub, APIResponse
-from vng_api.types import StorageContainerInventoryResponse, StorageContainer
+from vng_api.types import StorageContainerInventoryResponse, StorageContainer, StorageContainerRules
 
 
 class StorageContainerSub(APISub):
@@ -35,3 +35,16 @@ class StorageContainerSub(APISub):
         """
         return await self.client.api_call('patch', f'probe/{pid}/storage-containers/{container_id}',
                                           {'label': label}, lambda inp: StorageContainerInventoryResponse.from_dict(inp))
+
+    async def set_rules(self, pid: int, container_id: str, rules: StorageContainerRules) -> APIResponse[StorageContainerInventoryResponse]:
+        """Update storage routing rules for a container.
+
+        Priority routes matching new items to this selected-probe container first unless it is full. Exclusion avoids this container unless no
+        other non-strict container can accept the item. Strict exclusion prevents automatic placement into this container.
+
+        :param pid: Probe ID
+        :param container_id: Container ID
+        :param rules: New rules
+        """
+        return await self.client.api_call('patch', f'/api/probe/{pid}/storage-containers/{container_id}/rules', rules.to_dict(),
+                                          lambda inp: StorageContainerInventoryResponse.from_dict(inp))
