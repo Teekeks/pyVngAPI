@@ -62,6 +62,7 @@ class Vector(DataClassDictMixin):
     def __iter__(self):
         return iter([self.x, self.y, self.z])
 
+
 @dataclass
 class Sector(DataClassDictMixin):
     relative: Vector
