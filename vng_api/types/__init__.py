@@ -8,7 +8,7 @@ __all__ = ['Vector', 'Sector', 'SectorVisitHistory', 'SectorObservation', 'Secto
            'ResourceType', 'Player', 'APIKey', 'Mineable', 'Printable', 'PrintResponse', 'MissileState', 'ProbeSectorResponse',
            'AutonomousUnitObservationResponse', 'AutonomousUnitCarrier', 'AutonomousUnitObservation', 'Mission', 'MissionStep',
            'MessageEndpoint', 'Message', 'MessageResponse', 'Pagination', 'ScutNetworkProbe', 'ProbeImprovement', 'ProbeImprovementId',
-           'ProbeImprovementIngredient', 'ObservedClass']
+           'ProbeImprovementIngredient', 'ObservedClass', 'BlueprintReference', 'ProbeReference', 'ProbeImprovementBlueprintShareResponse']
 
 from dataclasses import dataclass, field
 from mashumaro import DataClassDictMixin
@@ -764,3 +764,25 @@ class ProbeImprovement(DataClassDictMixin):
     effects: Dict[Any, Any]
     createdAt: str | None = None
     updatedAt: str | None = None
+
+
+@dataclass
+class BlueprintReference(DataClassDictMixin):
+    id: ProbeImprovementId
+    name: str
+
+
+@dataclass
+class ProbeReference(DataClassDictMixin):
+    id: int
+    name: str
+
+
+@dataclass
+class ProbeImprovementBlueprintShareResponse(DataClassDictMixin):
+    blueprint: BlueprintReference
+    recipientProbe: ProbeReference
+    alreadyKnown: bool
+    """True when the recipient player already owned the blueprint before this request."""
+    recipientNotified: bool
+    """Confirms that a persistent recipient alert exists; retries do not duplicate it."""
