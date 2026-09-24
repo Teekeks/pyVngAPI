@@ -7,6 +7,7 @@ from vng_api.subs.probe.missile import MissileSub
 from vng_api.subs.probe.scut_network import SCUTNetworkSub
 from vng_api.subs.probe.sector import ProbeSectorSub
 from vng_api.subs.probe.message import MessageSub
+from vng_api.subs.probe.storage_container import StorageContainerSub
 from vng_api.types import ProbeType, OutOfRangeProbe, Probe, ProbeSummaryList, Vector, Movement
 
 if TYPE_CHECKING:
@@ -21,6 +22,7 @@ class ProbeSub(APISub):
         super().__init__(client)
         self.sector: ProbeSectorSub = ProbeSectorSub(client)
         self.missile: MissileSub = MissileSub(client)
+        self.storage_container: StorageContainerSub = StorageContainerSub(client)
         self.improvement: ImprovementSub = ImprovementSub(client)
         self.message: MessageSub = MessageSub(client)
         self.scut_network: SCUTNetworkSub = SCUTNetworkSub(client)

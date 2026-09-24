@@ -8,7 +8,8 @@ __all__ = ['Vector', 'Sector', 'SectorVisitHistory', 'SectorObservation', 'Secto
            'ResourceType', 'Player', 'APIKey', 'Mineable', 'Printable', 'PrintResponse', 'MissileState', 'ProbeSectorResponse',
            'AutonomousUnitObservationResponse', 'AutonomousUnitCarrier', 'AutonomousUnitObservation', 'Mission', 'MissionStep',
            'MessageEndpoint', 'Message', 'MessageResponse', 'Pagination', 'ScutNetworkProbe', 'ProbeImprovement', 'ProbeImprovementId',
-           'ProbeImprovementIngredient', 'ObservedClass', 'BlueprintReference', 'ProbeReference', 'ProbeImprovementBlueprintShareResponse']
+           'ProbeImprovementIngredient', 'ObservedClass', 'BlueprintReference', 'ProbeReference', 'ProbeImprovementBlueprintShareResponse',
+           'InventoryBrief', 'StorageContainerInventoryResponse']
 
 from dataclasses import dataclass, field
 from mashumaro import DataClassDictMixin
@@ -719,7 +720,7 @@ class Message(DataClassDictMixin):
     recipient: MessageEndpoint
     sector: Sector
     body: str
-    status: Literal['unread', 'read'] | str
+    status: Literal['unread', 'read']
     readAt: datetime | None
     createdAt: datetime
     updatedAt: datetime | None
@@ -787,3 +788,16 @@ class ProbeImprovementBlueprintShareResponse(DataClassDictMixin):
     """True when the recipient player already owned the blueprint before this request."""
     recipientNotified: bool
     """Confirms that a persistent recipient alert exists; retries do not duplicate it."""
+
+
+@dataclass
+class InventoryBrief(DataClassDictMixin):
+    capacityUnit: CapacityUnit
+    items: List[Item]
+    resourceStorcks: List[ResourceStock]
+
+
+@dataclass
+class StorageContainerInventoryResponse(DataClassDictMixin):
+    container: StorageContainer
+    inventory: InventoryBrief
