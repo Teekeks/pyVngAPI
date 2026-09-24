@@ -13,6 +13,7 @@ __all__ = ['Vector', 'Sector', 'SectorVisitHistory', 'SectorObservation', 'Secto
 from dataclasses import dataclass, field
 from mashumaro import DataClassDictMixin
 from typing import List, Dict, Any, Literal, Union
+from datetime import datetime
 
 
 ProbeModel = Union[Literal['generic', 'deuterium_tanker'], str]
@@ -59,8 +60,8 @@ class Sector(DataClassDictMixin):
 @dataclass
 class SectorVisitHistory(DataClassDictMixin):
     relativeCoordinates: Vector
-    firstVisitedAt: str
-    lastVisitedAt: str
+    firstVisitedAt: datetime
+    lastVisitedAt: datetime
     visitCount: int
 
 
@@ -77,7 +78,7 @@ class WaypointBookmark(DataClassDictMixin):
     name: str
     playerId: int
     playerName: str
-    createdAt: str
+    createdAt: datetime
 
 
 @dataclass
@@ -195,9 +196,9 @@ class SectorObject(DataClassDictMixin):
     """Present only for moving missile objects."""
     targetId: str | None = None
     """Opaque public target id, present only for moving missile objects."""
-    launchedAt: str | None = None
+    launchedAt: datetime | None = None
     """Present only for moving missile objects."""
-    impactAt: str | None = None
+    impactAt: datetime | None = None
     """Estimated resolution time, present only for moving missile objects."""
     targetsCurrentProbe: bool | None = None
     """Present on moving missiles in probe-scoped current-sector scans; true only when the observing probe is the missile target."""
@@ -252,7 +253,7 @@ class SectorObject(DataClassDictMixin):
     createdByProbeName: str | None = None
     """Present only for SCUT relay objects; probe name when the creator still exists, 
     "death probe" when createdByProbeId points to a deleted probe, null when no creator was recorded."""
-    activatedAt: str | None = None
+    activatedAt: datetime | None = None
     """Present only for SCUT relay objects."""
     coverageRadiusSectors: int | None = None
     """Present only for SCUT relay objects."""
@@ -292,8 +293,8 @@ class ScutNetworkProbe(DataClassDictMixin):
 class ScutNetwork(DataClassDictMixin):
     id: int
     name: str
-    createdAt: str
-    updatedAt: str
+    createdAt: datetime
+    updatedAt: datetime
     relayCount: int
     coveredSectorCount: int
     relays: List[ScutRelay]
@@ -410,8 +411,8 @@ class Movement(DataClassDictMixin):
     distance: int
     fuelCostDeuterium: float
     """Fixed deuterium-point cost reserved at departure for the complete trip, including deceleration."""
-    startedAt: str
-    arrivalAt: str
+    startedAt: datetime
+    arrivalAt: datetime
     phase: Literal['idle', 'preparing', 'accelerating', 'cruising', 'decelerating', 'arrived', 'failed', 'destroyed'] | str | None = None
     secondsRemaining: int | None = None
     sensorMode: ProbeSensorMode | None = None
@@ -601,7 +602,7 @@ class APIKey(DataClassDictMixin):
     """Clear API key shown only once. Use it as the Bearer token."""
     label: str
     lastFour: str
-    createdAt: str
+    createdAt: datetime
 
 
 @dataclass
@@ -617,10 +618,10 @@ class MissileState(DataClassDictMixin):
     launcherId: str
     targetId: str
     status: str
-    launchedAt: str
-    createdAt: str
-    updatedAt: str
-    impactAt: str | None = None
+    launchedAt: datetime
+    createdAt: datetime
+    updatedAt: datetime
+    impactAt: datetime | None = None
     result: str | None = None
     actionId: str | None = None
     details: Dict[Any, Any] | None = None
@@ -665,10 +666,10 @@ class MissionStep(DataClassDictMixin):
     description: str
     status: Literal['pending', 'completed', 'failed', 'skipped'] | str
     metadata: Dict[Any, Any]
-    createdAt: str
-    updatedAt: str | None = None
-    completedAt: str | None = None
-    failedAt: str | None = None
+    createdAt: datetime
+    updatedAt: datetime | None = None
+    completedAt: datetime | None = None
+    failedAt: datetime | None = None
 
 
 @dataclass
@@ -685,15 +686,15 @@ class Mission(DataClassDictMixin):
     metadata: Dict[Any, Any]
     """Public mission metadata. Sector coordinates, when present, are exposed as player-relative coordinates under `sector.relative`; 
     inhabited-planet names that would reveal absolute coordinates are replaced by a public label."""
-    startedAt: str
-    createdAt: str
-    updatedAt: str | None
+    startedAt: datetime
+    createdAt: datetime
+    updatedAt: datetime | None
     steps: List[MissionStep]
     createdByEvent: Dict[Any, Any] | None = None
     """Public mission creation context. Sector coordinates, when present, are exposed as player-relative coordinates under `sector.relative`."""
-    completedAt: str | None = None
-    failedAt: str | None = None
-    abandonedAt: str | None = None
+    completedAt: datetime | None = None
+    failedAt: datetime | None = None
+    abandonedAt: datetime | None = None
 
 
 @dataclass
@@ -719,9 +720,9 @@ class Message(DataClassDictMixin):
     sector: Sector
     body: str
     status: Literal['unread', 'read'] | str
-    readAt: str | None
-    createdAt: str
-    updatedAt: str | None
+    readAt: datetime | None
+    createdAt: datetime
+    updatedAt: datetime | None
 
 
 @dataclass
@@ -762,8 +763,8 @@ class ProbeImprovement(DataClassDictMixin):
     durationSeconds: int
     ingredients: List[ProbeImprovementIngredient]
     effects: Dict[Any, Any]
-    createdAt: str | None = None
-    updatedAt: str | None = None
+    createdAt: datetime | None = None
+    updatedAt: datetime | None = None
 
 
 @dataclass
