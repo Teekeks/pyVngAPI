@@ -9,7 +9,7 @@ __all__ = ['Vector', 'Sector', 'SectorVisitHistory', 'SectorObservation', 'Secto
            'AutonomousUnitObservationResponse', 'AutonomousUnitCarrier', 'AutonomousUnitObservation', 'Mission', 'MissionStep',
            'MessageEndpoint', 'Message', 'MessageResponse', 'Pagination', 'ScutNetworkProbe', 'ProbeImprovement', 'ProbeImprovementId',
            'ProbeImprovementIngredient', 'ObservedClass', 'BlueprintReference', 'ProbeReference', 'ProbeImprovementBlueprintShareResponse',
-           'InventoryBrief', 'StorageContainerInventoryResponse']
+           'InventoryBrief', 'StorageContainerInventoryResponse', 'CraftingReservationResponse', 'CraftingReassignment']
 
 from dataclasses import dataclass, field
 from mashumaro import DataClassDictMixin
@@ -801,3 +801,16 @@ class InventoryBrief(DataClassDictMixin):
 class StorageContainerInventoryResponse(DataClassDictMixin):
     container: StorageContainer
     inventory: InventoryBrief
+
+
+@dataclass
+class CraftingReassignment(DataClassDictMixin):
+    mannyId: str
+    containerId: str
+
+
+@dataclass
+class CraftingReservationResponse(DataClassDictMixin):
+    reassignmentCount: int
+    reassignments: List[CraftingReassignment]
+
