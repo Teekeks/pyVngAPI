@@ -26,8 +26,11 @@ class AlertSub(APISub):
         :param pid: Probe ID
         :param alert_id: Alert ID
         """
-        return await self.client.api_call('patch', f'probe/{pid}/alerts/{alert_id}', None,
+        data = await self.client.api_call('patch', f'probe/{pid}/alerts/{alert_id}', None,
                                           lambda inp: Alert.from_dict(inp['alert']))
+        if data.success:
+            await self.client.issue_cache_update(data.data)
+        return data
 
     async def delete(self, pid: int, alert_id: str) -> APIResponse[None]:
         """Delete a persistent probe alert.
