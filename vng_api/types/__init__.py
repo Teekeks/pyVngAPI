@@ -11,7 +11,8 @@ __all__ = ['Vector', 'Sector', 'SectorVisitHistory', 'SectorObservation', 'Secto
            'ProbeImprovementIngredient', 'ObservedClass', 'BlueprintReference', 'ProbeReference', 'ProbeImprovementBlueprintShareResponse',
            'InventoryBrief', 'StorageContainerInventoryResponse', 'CraftingReservationResponse', 'CraftingReassignment', 'ProbeAlertResponse',
            'Alert', 'AlertDataBlueprint', 'AlertDataInstanceSwitch', 'AlertDataContainer', 'AlertDataObject', 'AlertDataReport', 'AlertDataPlanet',
-           'AlertDataRisk', 'AlertDataProbeDestroyed', 'AlertRules', 'AlertType', 'ProbeDestroyedReason', 'ProbeDamageWarningRule', 'MessageStatus']
+           'AlertDataRisk', 'AlertDataProbeDestroyed', 'AlertRules', 'AlertType', 'ProbeDestroyedReason', 'ProbeDamageWarningRule', 'MessageStatus',
+           'ProbeDamageWarningResponse']
 
 from dataclasses import dataclass, field
 from mashumaro import DataClassDictMixin
@@ -659,7 +660,7 @@ class AutonomousUnitObservation(DataClassDictMixin):
     """Opaque public identifier of the deployed unit."""
     kind: Literal['manny', 'others_auxiliary'] | str
     carrier: AutonomousUnitCarrier
-    spatialState: Literal['moving_to_sector_object', 'returning_to_carrier', 'drifting', 'landed_on_sector_object'] | str
+    spatialState: Literal['moving_to_sector_object', 'returning_to_carrier', 'drifting', 'landed_on_sector_object']
 
 
 @dataclass
@@ -675,7 +676,7 @@ class MissionStep(DataClassDictMixin):
     sortOrder: int
     tite: str
     description: str
-    status: Literal['pending', 'completed', 'failed', 'skipped'] | str
+    status: Literal['pending', 'completed', 'failed', 'skipped']
     metadata: Dict[Any, Any]
     createdAt: datetime
     updatedAt: datetime | None = None
@@ -692,8 +693,8 @@ class Mission(DataClassDictMixin):
     First-contact intelligent-life scenarios currently use `first_contact.return_to_space_program`."""
     title: str
     description: str
-    status: Literal['active', 'completed', 'failed', 'abandoned'] | str
-    stepOrder: Literal['free', 'sequential'] | str
+    status: Literal['active', 'completed', 'failed', 'abandoned']
+    stepOrder: Literal['free', 'sequential']
     metadata: Dict[Any, Any]
     """Public mission metadata. Sector coordinates, when present, are exposed as player-relative coordinates under `sector.relative`; 
     inhabited-planet names that would reveal absolute coordinates are replaced by a public label."""
@@ -710,7 +711,7 @@ class Mission(DataClassDictMixin):
 
 @dataclass
 class MessageEndpoint(DataClassDictMixin):
-    type: Literal['probe', 'planet', 'unknown'] | str
+    type: Literal['probe', 'planet', 'unknown']
     id: str | int
     """Numeric probe id for probe endpoints, opaque planet object id for planet endpoints, or opaque sender id for unknown endpoints. 
     Planet ids must not be interpreted as coordinates."""
@@ -929,3 +930,9 @@ class Alert(DataClassDictMixin):
 class ProbeAlertResponse(DataClassDictMixin):
     alerts: List[Alert]
     rules: AlertRules
+
+
+@dataclass
+class ProbeDamageWarningResponse(DataClassDictMixin):
+    damageWarnings: List[Alert]
+    rules: ProbeDamageWarningRule

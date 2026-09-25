@@ -1,6 +1,7 @@
 from vng_api.base import APISub, APIResponse
 from typing import TYPE_CHECKING
 
+from vng_api.subs.probe.damage_warning import DamageWarningSub
 from vng_api.subs.probe.improvement import ImprovementSub
 from vng_api.subs.probe.manny import MannySub
 from vng_api.subs.probe.missile import MissileSub
@@ -25,6 +26,7 @@ class ProbeSub(APISub):
         self.missile: MissileSub = MissileSub(client)
         self.storage_container: StorageContainerSub = StorageContainerSub(client)
         self.alert: AlertSub = AlertSub(client)
+        self.damage_warning: DamageWarningSub = DamageWarningSub(client)
         self.improvement: ImprovementSub = ImprovementSub(client)
         self.message: MessageSub = MessageSub(client)
         self.scut_network: SCUTNetworkSub = SCUTNetworkSub(client)
