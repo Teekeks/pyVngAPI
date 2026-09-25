@@ -16,3 +16,14 @@ class DamageWarningSub(APISub):
         """
         return await self.client.api_call('get', f'/api/probe/{pid}/damage-warnings', None,
                                           lambda inp: ProbeDamageWarningResponse.from_dict(inp))
+
+    async def delete(self, pid: int, warning_id: str) -> APIResponse[None]:
+        """Delete a movement damage warning.
+
+        Permanently deletes the warning only when it belongs to the selected probe owned by the authenticated player. An unknown warning or a
+        warning belonging to another probe returns `404`.
+
+        :param pid: Probe ID
+        :param warning_id: Warning ID
+        """
+        return await self.client.api_call('delete', f'/api/probe/{pid}/damage-warnings/{warning_id}', None, None)
