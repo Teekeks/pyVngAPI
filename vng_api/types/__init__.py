@@ -12,7 +12,7 @@ __all__ = ['Vector', 'Sector', 'SectorVisitHistory', 'SectorObservation', 'Secto
            'InventoryBrief', 'StorageContainerInventoryResponse', 'CraftingReservationResponse', 'CraftingReassignment', 'ProbeAlertResponse',
            'Alert', 'AlertDataBlueprint', 'AlertDataInstanceSwitch', 'AlertDataContainer', 'AlertDataObject', 'AlertDataReport', 'AlertDataPlanet',
            'AlertDataRisk', 'AlertDataProbeDestroyed', 'AlertRules', 'AlertType', 'ProbeDestroyedReason', 'ProbeDamageWarningRule', 'MessageStatus',
-           'ProbeDamageWarningResponse']
+           'ProbeDamageWarningResponse', 'Session']
 
 from dataclasses import dataclass, field
 from mashumaro import DataClassDictMixin
@@ -936,3 +936,10 @@ class ProbeAlertResponse(DataClassDictMixin):
 class ProbeDamageWarningResponse(DataClassDictMixin):
     damageWarnings: List[Alert]
     rules: ProbeDamageWarningRule
+
+
+@dataclass
+class Session(DataClassDictMixin):
+    token: str
+    expiresAt: datetime
+    player: Player

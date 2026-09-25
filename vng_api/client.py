@@ -13,7 +13,7 @@ from vng_api.subs.mission import MissionSub
 
 __all__ = ['APIClient']
 
-from vng_api.types import CraftingRecipe
+from vng_api.types import CraftingRecipe, Session
 
 
 class APIClient:
@@ -96,6 +96,18 @@ class APIClient:
     async def version(self) -> APIResponse[int]:
         """Get API Version"""
         return await self.api_call('get', 'version', None, lambda inp: inp['apiVersion'])
+
+    async def start_session(self, username: str, password: str) -> APIResponse[Session]:
+        """Create a password session
+
+        :param username: Username
+        :param password: Password
+        """
+        param = {
+            'username': username,
+            'password': password,
+        }
+        return await self.api_call('post', 'session', param, lambda inp: Session.from_dict(inp))
 
     async def crafting_recipes(self) -> APIResponse[List[CraftingRecipe]]:
         """List available crafting recipes"""
