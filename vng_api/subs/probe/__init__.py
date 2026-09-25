@@ -1,6 +1,7 @@
 from vng_api.base import APISub, APIResponse
 from typing import TYPE_CHECKING
 
+from vng_api.helper.internal import remove_none
 from vng_api.subs.probe.damage_warning import DamageWarningSub
 from vng_api.subs.probe.improvement import ImprovementSub
 from vng_api.subs.probe.manny import MannySub
@@ -50,6 +51,26 @@ class ProbeSub(APISub):
         """List player Neumann Probes"""
         return await self.client.api_call('get', 'probes', None,
                                           lambda inp: ProbeSummaryList.from_dict(inp))
+
+    async def update(self, pid: int, name: str | None = None, is_default: bool | None = None) -> APIResponse[ProbeSummaryList]:
+        """Update a Neumann probe
+
+        Renames the requested owned probe when `name` is provided. When `is_default` is True, sets the requested owned probe as the player's
+        default probe. The current default probe and the requested probe must be in the same sector, or both sectors must be covered by the same
+        active SCUT network, before the default probe can be changed.
+
+        :param pid: Probe ID
+        :param name: if set, changes the name of the Probe
+        :param is_default: If set, changes the default probe to the specified one
+        """
+        body = remove_none({
+            'name': name,
+            'isDefault': is_default
+        })
+        ret = await self.client.api_call('patch', f'probe/{pid}', body, lambda inp: ProbeSummaryList.from_dict(inp))
+        if ret.success:
+            await self.client.issue_cache_update(ret.data)
+        return ret
 
     async def move(self, pid: int, vector: Vector = None, x: int = None, y: int = None, z: int = None) -> APIResponse[Movement]:
         """Start an asynchronous intersector movement
