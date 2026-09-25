@@ -7,7 +7,7 @@ if TYPE_CHECKING:
     from vng_api.client import APIClient
 
 
-__all__ = ['APIResponse', 'APIBatchResult', 'APIStats', 'APISub', 'BASEURL']
+__all__ = ['APIResponse', 'APIBatchResult', 'APIStats', 'APISub', 'BASEURL', 'ClientException']
 
 BASEURL = 'https://neumann-probe.net/api/'
 
@@ -57,3 +57,7 @@ class APISub:
 
     def __init__(self, client: "APIClient"):
         self.client = client
+
+
+class ClientException(Exception):
+    pass

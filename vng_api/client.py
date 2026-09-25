@@ -4,7 +4,7 @@ from datetime import datetime, UTC, timedelta
 import aiohttp
 import orjson
 
-from vng_api.base import APIStats, BASEURL, APIResponse
+from vng_api.base import APIStats, BASEURL, APIResponse, ClientException
 from vng_api import __version__
 from vng_api.subs.probe import ProbeSub
 from vng_api.subs.sector import SectorSub
@@ -23,23 +23,25 @@ class APIClient:
     tool_author: str | None = None
     """Set this to add your tools author to the user agent string of all requests, ignored if tool_name is not set as well."""
 
-    def __init__(self, token: str):
+    def __init__(self, token: str | None):
         self.stats: APIStats = APIStats()
-        self.token = token
+        self.token: str | None = token
         # subs:
         self.sector: SectorSub = SectorSub(self)
         self.player: PlayerSub = PlayerSub(self)
         self.mission: MissionSub = MissionSub(self)
         self.probe: ProbeSub = ProbeSub(self)
 
-    def get_headers(self) -> Dict[str, str]:
+    def get_headers(self, require_token: bool) -> Dict[str, str]:
         ua = f'VNG-API Client v{__version__} by Teekeks'
         if self.tool_name is not None:
             ua = f'{self.tool_name}{f' by {self.tool_author}' if self.tool_author is not None else ''} (using {ua})'
-        return {
-            'Authorization': f'Bearer {self.token}',
-            'User-Agent': ua
-        }
+        headers = {'User-Agent': ua}
+        if require_token:
+            if self.token is None:
+                raise ClientException('Token is required for this API endpoint')
+            headers['Authorization'] = f'Bearer {self.token}'
+        return headers
 
     async def issue_cache_update(self, d: Any):
         # FIXME: implement
@@ -49,14 +51,16 @@ class APIClient:
                           method: Literal['get', 'put', 'delete', 'post', 'patch'],
                           path: str,
                           json_data: Any | None = None,
-                          data_transform: Callable[[Dict[Any, Any]], T] | None = None) -> APIResponse[T]:
+                          data_transform: Callable[[Dict[Any, Any]], T] | None = None,
+                          require_token: bool = True) -> APIResponse[T]:
         """Makes a call to the API using the given method.
 
         :param method: The HTTP method to use.
         :param path: The URL path excluding the base api path.
         :param json_data: The data to send as JSON.
-        :param data_transform: A Function that transforms the api response"""
-        async with aiohttp.ClientSession(headers=self.get_headers(),
+        :param data_transform: A Function that transforms the api response
+        :param require_token: True if a token is required for the API call"""
+        async with aiohttp.ClientSession(headers=self.get_headers(require_token),
                                          json_serialize_bytes=orjson.dumps) as session:
             ret = await session.request(method, BASEURL + path, json=json_data)
             error_code = error_message = data = None
@@ -95,7 +99,7 @@ class APIClient:
 
     async def version(self) -> APIResponse[int]:
         """Get API Version"""
-        return await self.api_call('get', 'version', None, lambda inp: inp['apiVersion'])
+        return await self.api_call('get', 'version', None, lambda inp: inp['apiVersion'], False)
 
     async def start_session(self, username: str, password: str) -> APIResponse[Session]:
         """Create a password session
@@ -107,7 +111,7 @@ class APIClient:
             'username': username,
             'password': password,
         }
-        return await self.api_call('post', 'session', param, lambda inp: Session.from_dict(inp))
+        return await self.api_call('post', 'session', param, lambda inp: Session.from_dict(inp), False)
 
     async def crafting_recipes(self) -> APIResponse[List[CraftingRecipe]]:
         """List available crafting recipes"""
