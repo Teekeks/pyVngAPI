@@ -1,5 +1,5 @@
 from vng_api.base import APISub, APIResponse
-from vng_api.types import ProbeDamageWarningResponse
+from vng_api.types import ProbeDamageWarningResponse, Alert
 
 
 class DamageWarningSub(APISub):
@@ -16,6 +16,18 @@ class DamageWarningSub(APISub):
         """
         return await self.client.api_call('get', f'/api/probe/{pid}/damage-warnings', None,
                                           lambda inp: ProbeDamageWarningResponse.from_dict(inp))
+
+    async def read(self, pid: int, warning_id: str) -> APIResponse[Alert]:
+        """Mark a movement damage warning as read
+
+        :param pid: Probe ID
+        :param warning_id: Warning ID
+        """
+        data = await self.client.api_call('patch', f'/api/probe/{pid}/damage-warnings/{warning_id}', None,
+                                          lambda inp: Alert.from_dict(inp['damageWarning']))
+        if data.success:
+            await self.client.issue_cache_update(data.data)
+        return data
 
     async def delete(self, pid: int, warning_id: str) -> APIResponse[None]:
         """Delete a movement damage warning.
