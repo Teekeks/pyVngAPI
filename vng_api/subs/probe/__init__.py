@@ -12,7 +12,7 @@ from vng_api.subs.probe.message import MessageSub
 from vng_api.subs.probe.storage_container import StorageContainerSub
 from vng_api.subs.probe.alert import AlertSub
 from vng_api.subs.probe.inventory import InventorySub
-from vng_api.types import ProbeType, OutOfRangeProbe, Probe, ProbeSummaryList, Vector, Movement
+from vng_api.types import ProbeType, OutOfRangeProbe, Probe, ProbeSummaryList, Vector, Movement, ProbeMindSnapshotReassignResponse
 
 if TYPE_CHECKING:
     from vng_api.client import APIClient
@@ -103,3 +103,12 @@ class ProbeSub(APISub):
 
         :param pid: Probe ID"""
         return await self.client.api_call('delete', f'probe/{pid}/move')
+
+    async def reassign_mind_snapshot(self) -> APIResponse[ProbeMindSnapshotReassignResponse]:
+        """Reassign a terminal probe mind snapshot
+
+        Available only when the current probe is dead or trapped by a black hole.
+        Deletes the terminal probe state, assigns the player's last stable mind snapshot to a fresh probe chassis, resets the player's local reference
+        frame, and marks the new origin as 0,0,0."""
+        return await self.client.api_call('post', '/api/probe/mind-snapshot/reassign', None,
+                                          lambda inp: ProbeMindSnapshotReassignResponse.from_dict(inp))

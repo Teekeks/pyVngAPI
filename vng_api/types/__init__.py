@@ -12,7 +12,8 @@ __all__ = ['Vector', 'Sector', 'SectorVisitHistory', 'SectorObservation', 'Secto
            'InventoryBrief', 'StorageContainerInventoryResponse', 'CraftingReservationResponse', 'CraftingReassignment', 'ProbeAlertResponse',
            'Alert', 'AlertDataBlueprint', 'AlertDataInstanceSwitch', 'AlertDataContainer', 'AlertDataObject', 'AlertDataReport', 'AlertDataPlanet',
            'AlertDataRisk', 'AlertDataProbeDestroyed', 'AlertRules', 'AlertType', 'ProbeDestroyedReason', 'ProbeDamageWarningRule', 'MessageStatus',
-           'ProbeDamageWarningResponse', 'Session', 'ProbeInventoryJettisonResponse', 'Jettisoned', 'StorageMoveResponse']
+           'ProbeDamageWarningResponse', 'Session', 'ProbeInventoryJettisonResponse', 'Jettisoned', 'StorageMoveResponse',
+           'ProbeMindSnapshotReassignResponse']
 
 from dataclasses import dataclass, field
 from mashumaro import DataClassDictMixin
@@ -972,3 +973,11 @@ class ProbeInventoryJettisonResponse(DataClassDictMixin):
 class StorageMoveResponse(DataClassDictMixin):
     manny: Manny
     inventory: ProbeInventory
+
+
+@dataclass
+class ProbeMindSnapshotReassignResponse(DataClassDictMixin):
+    reassigned: bool
+    previousProbeId: int
+    probe: Probe
+    message: str
