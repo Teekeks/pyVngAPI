@@ -11,6 +11,7 @@ from vng_api.subs.probe.sector import ProbeSectorSub
 from vng_api.subs.probe.message import MessageSub
 from vng_api.subs.probe.storage_container import StorageContainerSub
 from vng_api.subs.probe.alert import AlertSub
+from vng_api.subs.probe.inventory import InventorySub
 from vng_api.types import ProbeType, OutOfRangeProbe, Probe, ProbeSummaryList, Vector, Movement
 
 if TYPE_CHECKING:
@@ -29,6 +30,7 @@ class ProbeSub(APISub):
         self.alert: AlertSub = AlertSub(client)
         self.damage_warning: DamageWarningSub = DamageWarningSub(client)
         self.improvement: ImprovementSub = ImprovementSub(client)
+        self.inventory: InventorySub = InventorySub(client)
         self.message: MessageSub = MessageSub(client)
         self.scut_network: SCUTNetworkSub = SCUTNetworkSub(client)
         self.manny: MannySub = MannySub(client)
