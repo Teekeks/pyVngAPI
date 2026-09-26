@@ -1,6 +1,8 @@
+from typing import Literal, List
+
 from vng_api.base import APISub, APIResponse
 from vng_api.helper.internal import remove_none
-from vng_api.types import Item, ProbeInventoryJettisonResponse
+from vng_api.types import Item, ProbeInventoryJettisonResponse, ResourceType, StorageMoveResponse
 
 
 class InventorySub(APISub):
@@ -40,4 +42,55 @@ class InventorySub(APISub):
                 await self.client.issue_cache_update(ret.data.many)
             if ret.data.jettisoned is not None:
                 await self.client.issue_cache_update(ret.data.jettisoned)
+        return ret
+
+    async def move(self,
+                   pid: int,
+                   actor_mid: str,
+                   kind: Literal['resource', 'item', 'manny'],
+                   to_container_id: str,
+                   from_container_id: str | None = None,
+                   resource_type: ResourceType | None = None,
+                   amount: float | None = None,
+                   item_id: str | None = None,
+                   item_ids: List[str] | None = None,
+                   target_mid: str | None = None,
+                   target_mids: List[str] | None = None,
+                   quantity: int | None = None,) -> APIResponse[StorageMoveResponse]:
+        """Assign a Manny to move stock between containers.
+
+        Starts a moving_stockage task on an idle onboard Manny. Unit items take 10 seconds; resources take 10 seconds per 0.05 ECE. Destination free
+        capacity is evaluated after subtracting cargo already reserved by other active storage moves toward the same container. additional_container
+        items cannot be moved through this endpoint; while onboard, they remain linked to the probe internal storage.
+
+        :param pid: Probe ID
+        :param actor_mid: ID of Idle onboard Manny that will perform the move.
+        :param kind: The Kind of thing to move
+        :param to_container_id: Target Container ID
+        :param from_container_id: Required for resource moves.
+        :param resource_type: The resource to move, Required for resource moves
+        :param amount: Required for resource moves, in ECE.
+        :param item_id: Single item id for item moves. Use itemIds for batch moves. additional_container items are rejected.
+        :param item_ids: Multiple item ids for batch item moves. additional_container items are rejected.
+        :param target_mid: Single Manny id for Manny moves. Use targetMannyIds for batch moves.
+        :param target_mids: Multiple Manny ids for batch Manny storage moves.
+        :param quantity: Optional cap applied to item_ids or target_mids.
+        """
+        data = remove_none({
+            'actorMannyId': actor_mid,
+            'kind': kind,
+            'toContainerId': to_container_id,
+            'fromContainerId': from_container_id,
+            'resourceType': resource_type,
+            'amount': amount,
+            'itemId': item_id,
+            'itemIds': item_ids,
+            'targetMannyId': target_mid,
+            'targetMannyIds': target_mids,
+            'quantity': quantity,
+        })
+        ret = await self.client.api_call('post', f'probe/{pid}/storage-moves', data, lambda inp: StorageMoveResponse.from_dict(inp))
+        if ret.success:
+            await self.client.issue_cache_update(ret.data.inventory)
+            await self.client.issue_cache_update(ret.data.manny)
         return ret
