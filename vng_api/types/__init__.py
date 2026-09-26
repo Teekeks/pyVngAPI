@@ -12,7 +12,7 @@ __all__ = ['Vector', 'Sector', 'SectorVisitHistory', 'SectorObservation', 'Secto
            'InventoryBrief', 'StorageContainerInventoryResponse', 'CraftingReservationResponse', 'CraftingReassignment', 'ProbeAlertResponse',
            'Alert', 'AlertDataBlueprint', 'AlertDataInstanceSwitch', 'AlertDataContainer', 'AlertDataObject', 'AlertDataReport', 'AlertDataPlanet',
            'AlertDataRisk', 'AlertDataProbeDestroyed', 'AlertRules', 'AlertType', 'ProbeDestroyedReason', 'ProbeDamageWarningRule', 'MessageStatus',
-           'ProbeDamageWarningResponse', 'Session']
+           'ProbeDamageWarningResponse', 'Session', 'ProbeInventoryJettisonResponse', 'Jettisoned']
 
 from dataclasses import dataclass, field
 from mashumaro import DataClassDictMixin
@@ -943,3 +943,26 @@ class Session(DataClassDictMixin):
     token: str
     expiresAt: datetime
     player: Player
+
+
+@dataclass
+class Jettisoned(DataClassDictMixin):
+    type: ItemKind | ResourceType | None = None
+    amount: float | int | None = None
+    """Present for discarded resources and deuterium."""
+    quantity: int | None = None
+    """Present for crafted items added to a drifting sector stack."""
+    driftingQuantity: int | None = None
+    """Total quantity of this crafted item type now drifting in the current sector."""
+    objectId: str | None = None
+    """Current-sector drifting item object id for crafted item jettison, or SCUT relay object id for scut_relay jettison."""
+    status: Union[Literal['off'], str] | None = None
+    """Present for scut_relay jettison."""
+    containerSpace: float | None = None
+
+
+@dataclass
+class ProbeInventoryJettisonResponse(DataClassDictMixin):
+    inventory: ProbeInventory
+    jettisoned: Jettisoned | None = None
+    many: Manny | None = None
