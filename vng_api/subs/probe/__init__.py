@@ -2,6 +2,7 @@ from vng_api.base import APISub, APIResponse
 from typing import TYPE_CHECKING
 
 from vng_api.helper.internal import remove_none
+from vng_api.subs.probe.asteroid_trajectory import AsteroidTrajectorySub
 from vng_api.subs.probe.damage_warning import DamageWarningSub
 from vng_api.subs.probe.improvement import ImprovementSub
 from vng_api.subs.probe.manny import MannySub
@@ -36,6 +37,7 @@ class ProbeSub(APISub):
         self.message: MessageSub = MessageSub(client)
         self.scut_network: SCUTNetworkSub = SCUTNetworkSub(client)
         self.manny: MannySub = MannySub(client)
+        self.asteroid_trajectory: AsteroidTrajectorySub = AsteroidTrajectorySub(client)
 
     async def get(self, pid: int) -> APIResponse[ProbeType]:
         """Get a Neumann probe by id
