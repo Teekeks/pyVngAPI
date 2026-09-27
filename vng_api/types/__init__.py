@@ -37,13 +37,21 @@ type ResourceType = Union[Literal['deuterium', 'metals', 'ice', 'carbon_compound
 type ObservedClass = Union[Literal['suspected_missile', 'large_ship', 'ship'], str]
 type Printable = Union[Literal['micro_conductor', 'ceramic_insulator', 'crystal_substrate',
                                'dopant_matrix', 'integrated_circuit', 'atomic_printer_part'], str]
-type ProbeImprovementId = Union[Literal['deuterium_compression', 'reinforced_container_couplings',
-                                        'distributed_thrust_anchoring', 'anatiform_asteroid_sculpting'], str]
+type ProbeImprovementId = Union[Literal['deuterium_compression', 'reinforced_container_couplings', 'distributed_thrust_anchoring',
+                                        'anatiform_asteroid_sculpting', 'relativistic_path_clearing'], str]
 type AlertType = Union[Literal['storage_container_break', 'intelligent_life', 'sector_object_detected', 'manny_report', 'anomaly_detected',
                                'mind_snapshot_transferred', 'probe_destroyed', 'asteroid_trajectory', 'blueprint_shared', 'others_presence',
                                'others_weapon', 'others_harvest_traces'], str]
 type MessageStatus = Union[Literal['unread', 'read'], str]
-type ProbeDestroyedReason = Union[Literal['black_hole_trap', 'movement_collision'], str]
+type ProbeDestroyedReason = Union[Literal['black_hole_trap', 'movement_collision', 'asteroid_impact', 'intersector_dust', 'laser_damage',
+                                          'missile_impact'], str]
+type MannyTask = Union[Literal['repair', 'mining', 'motorizing_asteroid', 'refueling_motorized_asteroid', 'sculpting_duck_asteroid', 'crafting',
+                               'assisting_atomic_printer', 'salvage', 'installing_waypoint_bookmark', 'detaching_storage_container',
+                               'dropping_storage_container', 'inspecting_sector_object', 'inspecting_asteroid', 'refilling_deuterium_tank',
+                               'transferring_deuterium_to_probe', 'transferring_to_probe', 'turning_on_scut_relay', 'installing_scut_transit_beacon',
+                               'improving_probe', 'assembling_probe', 'returning', 'waiting_for_space', 'moving_stockage',
+                               'transferring_sector_storage', 'unknown_too_far'], str]
+type MineableSectorObjectType = Union[Literal['planet', 'asteroid', 'dormant_construct'], str]
 
 
 @dataclass
@@ -126,7 +134,7 @@ class AsteroidTrajectory(DataClassDictMixin):
 @dataclass
 class MineableSectorObject(DataClassDictMixin):
     id: str
-    type: str
+    type: MineableSectorObjectType
     name: str | None
     mass: float
     resources: List[str]
@@ -134,7 +142,7 @@ class MineableSectorObject(DataClassDictMixin):
     resourceComposition: ResourceAmounts
     massUnit: str | None = None
     radius: float | None = None
-    radiusUnit: str | None = None
+    radiusUnit: RadiusUnit | None = None
     resourceAmounts: ResourceAmounts | None = None
     composition: str | None = None
     sizeCategory: str | None = None
@@ -156,7 +164,7 @@ class BookmarkableSectorObject(DataClassDictMixin):
     mass: float | None = None
     massUnit: str | None = None
     radius: float | None = None
-    radiusUnit: str | None = None
+    radiusUnit: RadiusUnit | None = None
     category: str | None = None
     habitabilityScore: float | None = None
     motorized: bool | None = None
@@ -275,7 +283,7 @@ class SectorObject(DataClassDictMixin):
     """Present only for drifting item stacks."""
     containerSpace: float | None = None
     """Per-item storage space for drifting item stacks."""
-    mode: Literal['[drifting', 'hidden_on_asteroid'] | str | None = None
+    mode: Literal['[drifting', 'hidden_on_asteroid', 'hidden_on_dormant_construct'] | str | None = None
     """Present only for detached containers. Hidden containers are included only for players who have discovered them."""
     targetObjectId: str | None = None
     """Present for detached containers, null unless the container is attached to another sector object."""
@@ -293,7 +301,7 @@ class SectorObject(DataClassDictMixin):
     knownFunction: Literal['unknown'] | str | None = None
     """Present only for dormant_construct objects; 
     detailed scans cannot determine whether the structure is a vessel, factory, or another kind of utility."""
-    status: Literal['off', 'on', 'moving'] | str | None = None
+    status: Literal['off', 'on', 'moving', 'accelerating', 'decelerating', 'preparing', 'idle', 'low_orbit'] | str | None = None
     """Relay activation state for SCUT relays, or `moving` for an in-flight missile."""
     createdByProbeId: int | None = None
     """Present only for SCUT relay objects."""
@@ -311,6 +319,12 @@ class SectorObject(DataClassDictMixin):
     """Present on detected missiles and Others ships."""
     movement: Movement | None = None
     summary: str | None = None
+    inspectable: bool | None = None
+    """Whether a Manny can inspect this object."""
+    inventoryAccessible: bool | None = None
+    """Whether this probe has discovered access to this object's storage. Does not grant access to other probes."""
+    targetable: bool | None = None
+    """Whether this observer currently has enough knowledge to select the structure as a target."""
 
 
 @dataclass
@@ -355,6 +369,8 @@ class SectorProbePresence(DataClassDictMixin):
     moving: bool
     owned: bool
     """True when the detected probe belongs to the authenticated player."""
+    status: Literal['idle', 'preparing', 'accelerating', 'cruising', 'decelerating', 'dead', 'trapped_by_black_hole'] | str
+    """Current observable state of the detected probe."""
 
 
 @dataclass
@@ -397,7 +413,7 @@ class Manny(DataClassDictMixin):
     id: str
     name: str
     location: MannyLocation
-    currentTask: str | None
+    currentTask: MannyTask | None
     taskProgressPercent: float
     taskEstimatedEndTime: str
     taskStartTime: str

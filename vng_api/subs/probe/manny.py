@@ -1,4 +1,4 @@
-from vng_api.helper.internal import optional
+from vng_api.helper.internal import optional, remove_none
 from vng_api.base import APISub, APIBatchResult, APIResponse
 from typing import TYPE_CHECKING, List, Dict, Any, Iterable, Literal
 
@@ -91,7 +91,7 @@ class MannyTaskManager(APISub):
     async def detach_storage_container(self,
                                        mid: str,
                                        container_id: str,
-                                       mode: Literal['drifting', 'hidden_on_asteroid', 'attach_to_probe'] = 'drifting',
+                                       mode: Literal['drifting', 'hidden_on_asteroid', 'attach_to_probe', 'hidden_on_dormant_construct'] = 'drifting',
                                        target_id: str | int | None = None):
         payload = optional({
             'containerId': container_id,
@@ -207,16 +207,17 @@ class MannySub(APISub):
             await self.client.issue_cache_update(data.data)
         return data
 
-    async def start_atomic_print(self, pid: int, recipe: Printable) -> APIResponse[PrintResponse]:
+    async def start_atomic_print(self, pid: int, recipe: Printable, mid: str | None = None) -> APIResponse[PrintResponse]:
         """Starts a recipe whose `craftableBy` includes `atomic_3d_printer`. The atomic printer reserves one available Manny aboard the probe for
         loading and unloading; that Manny exposes the `assisting_atomic_printer` task until the craft completes or is recalled.
 
         :param pid: Probe ID
         :param recipe: The recipe to craft
+        :param mid: Optional ID of manny to craft with, if None use first free
         """
         data = await self.client.api_call('post',
                                           f'probe/{pid}/atomic-printer/craft',
-                                          {'recipe': recipe},
+                                          remove_none({'recipe': recipe, 'mannyId': mid}),
                                           lambda inp: PrintResponse.from_dict(inp))
         if data.success:
             await self.client.issue_cache_update(data.data.manny)
