@@ -13,7 +13,7 @@ __all__ = ['Vector', 'Sector', 'SectorVisitHistory', 'SectorObservation', 'Secto
            'Alert', 'AlertDataBlueprint', 'AlertDataInstanceSwitch', 'AlertDataContainer', 'AlertDataObject', 'AlertDataReport', 'AlertDataPlanet',
            'AlertDataRisk', 'AlertDataProbeDestroyed', 'AlertRules', 'AlertType', 'ProbeDestroyedReason', 'ProbeDamageWarningRule', 'MessageStatus',
            'ProbeDamageWarningResponse', 'Session', 'ProbeInventoryJettisonResponse', 'Jettisoned', 'StorageMoveResponse',
-           'ProbeMindSnapshotReassignResponse']
+           'ProbeMindSnapshotReassignResponse', 'LogbookPage', 'LogbookPageSummary']
 
 from dataclasses import dataclass, field
 from mashumaro import DataClassDictMixin
@@ -981,3 +981,18 @@ class ProbeMindSnapshotReassignResponse(DataClassDictMixin):
     previousProbeId: int
     probe: Probe
     message: str
+
+
+@dataclass
+class LogbookPageSummary(DataClassDictMixin):
+    id: int
+    probeId: int
+    title: str
+    sortOrder: int
+    createdAt: datetime
+    updatedAt: datetime
+
+
+@dataclass
+class LogbookPage(LogbookPageSummary):
+    content: str

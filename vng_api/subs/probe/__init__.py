@@ -12,6 +12,7 @@ from vng_api.subs.probe.message import MessageSub
 from vng_api.subs.probe.storage_container import StorageContainerSub
 from vng_api.subs.probe.alert import AlertSub
 from vng_api.subs.probe.inventory import InventorySub
+from vng_api.subs.probe.logbook import LogBookSub
 from vng_api.types import ProbeType, OutOfRangeProbe, Probe, ProbeSummaryList, Vector, Movement, ProbeMindSnapshotReassignResponse
 
 if TYPE_CHECKING:
@@ -24,6 +25,7 @@ class ProbeSub(APISub):
 
     def __init__(self, client: "APIClient"):
         super().__init__(client)
+        self.logbook: LogBookSub = LogBookSub(client)
         self.sector: ProbeSectorSub = ProbeSectorSub(client)
         self.missile: MissileSub = MissileSub(client)
         self.storage_container: StorageContainerSub = StorageContainerSub(client)
