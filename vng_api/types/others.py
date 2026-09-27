@@ -1,4 +1,4 @@
-__all__ = ['OthersFleet', 'OthersShip', 'OthersShipMovement', 'OthersFuel', 'ShipLocation']
+__all__ = ['OthersFleet', 'OthersShip', 'OthersShipMovement', 'OthersFuel', 'ShipLocation', 'OthersFleetSummary']
 
 from dataclasses import dataclass
 from datetime import datetime
@@ -58,3 +58,14 @@ class OthersFleet(DataClassDictMixin):
     activeActions: List[Dict[Any, Any]]
     createdAt: datetime
     updatedAt: datetime
+
+
+@dataclass
+class OthersFleetSummary(DataClassDictMixin):
+    id: str
+    status: str
+    shipCount: int
+    standardShipCount: int
+    auxiliaryCount: int
+    deployedAuxiliaryCount: int
+    activeActionCount: int
