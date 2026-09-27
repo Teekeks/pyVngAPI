@@ -26,3 +26,15 @@ class LogBookSub(APISub):
         """
         url = build_url(f'/api/probe/{pid}/logbook-pages', {'offset': offset, 'limit': limit})
         return await self.client.api_call('get', url, lambda inp: ProbeLogbookPagesResponse.from_dict(inp))
+
+    async def add_page(self, pid: int, title: str, content: str) -> APIResponse[LogbookPage]:
+        """Create a probe logbook page
+
+        Creates a page in the selected probe's logbook.
+
+        :param pid: Probe ID
+        :param title: Title of the new page, between 1 and 120 characters
+        :param content: Initial content of the page, up to 20_000 characters
+        """
+        param = {'title': title, 'content': content}
+        return await self.client.api_call('post', f'probe/{pid}/logbook-page', param, lambda inp: LogbookPage.from_dict(inp['page']))
