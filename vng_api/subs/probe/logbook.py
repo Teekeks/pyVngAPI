@@ -1,5 +1,5 @@
 from vng_api.base import APISub, APIResponse
-from vng_api.helper.internal import build_url
+from vng_api.helper.internal import build_url, remove_none
 from vng_api.types import LogbookPage, ProbeLogbookPagesResponse
 
 
@@ -46,3 +46,21 @@ class LogBookSub(APISub):
         :param page_id: Page ID
         """
         return await self.client.api_call('delete', f'/api/probe/{pid}/logbook-page/{page_id}', None, None)
+
+    async def update(self, pid: int, page_id: int, title: str | None, content: str | None) -> APIResponse[LogbookPage]:
+        """Update a probe logbook page
+
+        :param pid: Probe ID
+        :param page_id: Page ID
+        :param title: New title, leave None if not intending to change
+        :param content: new Content, leave None if not intenting to change
+        :raises ValueError: If both title and content are None
+        """
+        body = remove_none({'title': title, 'content': content})
+        if len(body.keys()) == 0:
+            raise ValueError('Specify at least one of title and content')
+        ret = await self.client.api_call('patch', f'/api/probe/{pid}/logbook-page/{page_id}', body, lambda inp: LogbookPage.from_dict(inp['page']))
+        if ret.success:
+            await self.client.issue_cache_update(ret.data)
+        return ret
+
