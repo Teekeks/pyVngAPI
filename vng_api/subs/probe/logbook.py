@@ -38,3 +38,11 @@ class LogBookSub(APISub):
         """
         param = {'title': title, 'content': content}
         return await self.client.api_call('post', f'probe/{pid}/logbook-page', param, lambda inp: LogbookPage.from_dict(inp['page']))
+
+    async def delete(self, pid: int, page_id: int) -> APIResponse[None]:
+        """Delete a probe logbook page
+
+        :param pid: Probe ID
+        :param page_id: Page ID
+        """
+        return await self.client.api_call('delete', f'/api/probe/{pid}/logbook-page/{page_id}', None, None)
