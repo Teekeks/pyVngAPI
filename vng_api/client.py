@@ -6,6 +6,7 @@ import orjson
 
 from vng_api.base import APIStats, BASEURL, APIResponse, ClientException
 from vng_api import __version__
+from vng_api.subs.others import OthersSub
 from vng_api.subs.probe import ProbeSub
 from vng_api.subs.sector import SectorSub
 from vng_api.subs.player import PlayerSub
@@ -31,6 +32,7 @@ class APIClient:
         self.player: PlayerSub = PlayerSub(self)
         self.mission: MissionSub = MissionSub(self)
         self.probe: ProbeSub = ProbeSub(self)
+        self.others: OthersSub = OthersSub(self)
 
     def get_headers(self, require_token: bool) -> Dict[str, str]:
         ua = f'VNG-API Client v{__version__} by Teekeks'
