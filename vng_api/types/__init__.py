@@ -95,6 +95,35 @@ class WaypointBookmark(DataClassDictMixin):
 
 
 @dataclass
+class AsteroidSpeed(DataClassDictMixin):
+    sectors: int
+    perSeconds: int
+
+
+@dataclass
+class AsteroidTrajectory(DataClassDictMixin):
+    id: str
+    asteroidId: str
+    mode: Literal['system_impact', 'sector_transfer'] | str
+    status: Literal['accelerating', 'coasting', 'crossing_sector', 'orbiting_black_hole', 'captured', 'completed', 'missed', 'no_effect',
+                    'destroyed', 'lost', 'failed'] | str
+    startedAt: datetime
+    nextTransitionAt: datetime
+    targetobjectId: str | None = None
+    targetSpeedC: float | None = None
+    currentSpeedC: float | None = None
+    plannedRevolutions: int | None = None
+    completedRevolutions: int | None = None
+    estimatedCompletionAt: datetime | None = None
+    speed: AsteroidSpeed | None = None
+    direction: Vector | None = None
+    sectorsCrossed: int | None = None
+    maximumSectorCrossings: int | None = None
+    result: str | None = None
+    failureReason: str | None = None
+
+
+@dataclass
 class MineableSectorObject(DataClassDictMixin):
     id: str
     type: str
@@ -113,7 +142,7 @@ class MineableSectorObject(DataClassDictMixin):
     motorFuelStatus: str | None = None
     capturedByObjectId: str | None = None
     distinctiveFeature: str | None = None
-    # TODO: trajectory
+    trajectory: AsteroidTrajectory | None = None
     category: str | None = None
     habitabilityScore: float | None = None
     waypointBookmarks: List[WaypointBookmark] | None = None
@@ -134,7 +163,7 @@ class BookmarkableSectorObject(DataClassDictMixin):
     motorFuelStatus: str | None = None
     capturedByObjectId: str | None = None
     distinctiveFeature: str | None = None
-    # TODO: trajectory
+    trajectory: AsteroidTrajectory | None = None
     waypointBookmarks: List[WaypointBookmark] | None = None
 
 
@@ -152,6 +181,11 @@ class MannyCargo(DataClassDictMixin):
     ice: float
     organicCompounds: float
     capacityUnit: CapacityUnit
+
+
+@dataclass
+class Movement(DataClassDictMixin):
+    direction: Vector
 
 
 @dataclass
@@ -202,7 +236,7 @@ class SectorObject(DataClassDictMixin):
     """Present only on duck-shaped asteroids; omitted from ordinary asteroid objects."""
     inTransit: bool | None = None
     """Present and true for a sector-transfer asteroid between two phase transitions."""
-    # TODO: trajectory (#/components/schemas/AsteroidTrajectory)
+    trajectory: AsteroidTrajectory | None = None
     launcherKind: Literal['probe', 'others_ship'] | None = None
     """Present only for moving missile objects."""
     targetKind: Literal['probe', 'others_ship', 'others_auxiliary', 'manny', 'missile', 'motorized_asteroid'] | str | None = None
@@ -275,7 +309,7 @@ class SectorObject(DataClassDictMixin):
     kind: str | None = None
     observedClass: ObservedClass | None = None
     """Present on detected missiles and Others ships."""
-    # TODO: movement
+    movement: Movement | None = None
     summary: str | None = None
 
 
@@ -1002,32 +1036,3 @@ class LogbookPage(LogbookPageSummary):
 class ProbeLogbookPagesResponse(DataClassDictMixin):
     pages: List[LogbookPageSummary]
     pagination: Pagination
-
-
-@dataclass
-class AsteroidSpeed(DataClassDictMixin):
-    sectors: int
-    perSeconds: int
-
-
-@dataclass
-class AsteroidTrajectory(DataClassDictMixin):
-    id: str
-    asteroidId: str
-    mode: Literal['system_impact', 'sector_transfer'] | str
-    status: Literal['accelerating', 'coasting', 'crossing_sector', 'orbiting_black_hole', 'captured', 'completed', 'missed', 'no_effect',
-                    'destroyed', 'lost', 'failed'] | str
-    startedAt: datetime
-    nextTransitionAt: datetime
-    targetobjectId: str | None = None
-    targetSpeedC: float | None = None
-    currentSpeedC: float | None = None
-    plannedRevolutions: int | None = None
-    completedRevolutions: int | None = None
-    estimatedCompletionAt: datetime | None = None
-    speed: AsteroidSpeed | None = None
-    direction: Vector | None = None
-    sectorsCrossed: int | None = None
-    maximumSectorCrossings: int | None = None
-    result: str | None = None
-    failureReason: str | None = None
