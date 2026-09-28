@@ -2,7 +2,7 @@ from typing import List
 
 from vng_api.base import APISub, APIResponse
 from vng_api.types import Vector
-from vng_api.types.others import OthersFleet, OthersFleetSummary, OthersFleetMoveResponse
+from vng_api.types.others import OthersFleet, OthersFleetSummary, OthersFleetMoveResponse, OthersDepotSummary
 
 
 class OthersFleetSub(APISub):
@@ -39,3 +39,19 @@ class OthersFleetSub(APISub):
         }
         return await self.client.api_call('post', f'others/fleets/{fid}/move', param,
                                           lambda inp: OthersFleetMoveResponse.from_dict(inp))
+
+    async def known_depots(self, fid: str) -> APIResponse[List[OthersDepotSummary]]:
+        """List depot sectors discovered by one owned fleet.
+
+        Returns all known germination depot sectors, ordered by x, y, then z.
+        Coordinates are relative to the owning player's home. A sector is recorded when a ship of this fleet arrives there and at least one completed
+        depot is present, regardless of its sealed, impacted or open state, or when an auxiliary of this fleet successfully completes construction of
+        a depot. Queued, unfinished or interrupted constructions do not add discoveries. Multiple depots or arrivals in a sector produce a single
+        entry. Knowledge persists after departure and is private to each fleet, including fleets with the same owner.
+        Reading this endpoint does not discover depots. Existing visits and constructions are not backfilled; discovery starts with arrivals
+        and successful construction completions after migration.
+
+        :param fid: Fleet ID
+        """
+        return await self.client.api_call('get', f'others/fleets/{fid}/known-depots', None,
+                                          lambda inp: [OthersDepotSummary.from_dict(x) for x in inp['knownDepots']])

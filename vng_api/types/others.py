@@ -1,5 +1,5 @@
 __all__ = ['OthersFleet', 'OthersShip', 'OthersShipMovement', 'OthersFuel', 'ShipLocation', 'OthersFleetSummary', 'OthersFleetMoveResponse',
-           'ActionActor', 'MoveAction', 'BlockedMove', 'IgnoredMove', 'OthersFleetMoveAcceptedAction']
+           'ActionActor', 'MoveAction', 'BlockedMove', 'IgnoredMove', 'OthersFleetMoveAcceptedAction', 'OthersDepotSummary']
 
 from dataclasses import dataclass
 from datetime import datetime
@@ -120,3 +120,8 @@ class OthersFleetMoveResponse(DataClassDictMixin):
     blocked: List[BlockedMove]
     """Ships whose individual move was refused. No action is created for these entries. Each entry contains a reason code, not an error object
     or a human-readable message."""
+
+
+@dataclass
+class OthersDepotSummary(DataClassDictMixin):
+    relativeCoordinates: Vector
