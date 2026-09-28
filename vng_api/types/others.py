@@ -1,5 +1,6 @@
 __all__ = ['OthersFleet', 'OthersShip', 'OthersShipMovement', 'OthersFuel', 'ShipLocation', 'OthersFleetSummary', 'OthersFleetMoveResponse',
-           'ActionActor', 'MoveAction', 'BlockedMove', 'IgnoredMove', 'OthersFleetMoveAcceptedAction', 'OthersDepotSummary']
+           'ActionActor', 'MoveAction', 'BlockedMove', 'IgnoredMove', 'OthersFleetMoveAcceptedAction', 'OthersDepotSummary',
+           'OthersPlanetHarvestAction']
 
 from dataclasses import dataclass
 from datetime import datetime
@@ -125,3 +126,14 @@ class OthersFleetMoveResponse(DataClassDictMixin):
 @dataclass
 class OthersDepotSummary(DataClassDictMixin):
     relativeCoordinates: Vector
+
+
+@dataclass
+class OthersPlanetHarvestAction(DataClassDictMixin):
+    id: str
+    type: Literal['planet_harvest']
+    status: Literal['queued'] | str
+    createdAt: datetime
+    updatedAt: datetime
+    actor: ActionActor
+    endsAt: datetime
