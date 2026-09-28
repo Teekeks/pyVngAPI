@@ -45,10 +45,10 @@ class OthersShip(DataClassDictMixin):
     location: ShipLocation
     sector: Sector
     movement: OthersShipMovement | None
-    auxiliaryCount: int
-    deployedAuxiliaryCount: int
     createdAt: datetime
     updatedAt: datetime
+    auxiliaryCount: int | None = None
+    deployedAuxiliaryCount: int | None = None
 
 
 @dataclass
