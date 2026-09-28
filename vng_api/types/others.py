@@ -1,4 +1,5 @@
-__all__ = ['OthersFleet', 'OthersShip', 'OthersShipMovement', 'OthersFuel', 'ShipLocation', 'OthersFleetSummary']
+__all__ = ['OthersFleet', 'OthersShip', 'OthersShipMovement', 'OthersFuel', 'ShipLocation', 'OthersFleetSummary', 'OthersFleetMoveResponse',
+           'ActionActor', 'MoveAction', 'BlockedMove', 'IgnoredMove', 'OthersFleetMoveAcceptedAction']
 
 from dataclasses import dataclass
 from datetime import datetime
@@ -69,3 +70,53 @@ class OthersFleetSummary(DataClassDictMixin):
     auxiliaryCount: int
     deployedAuxiliaryCount: int
     activeActionCount: int
+
+
+@dataclass
+class ActionActor(DataClassDictMixin):
+    kind: str
+    id: str
+
+
+@dataclass
+class OthersFleetMoveAcceptedAction(DataClassDictMixin):
+    id: str
+    """Public action identifier for GET /api/others/actions/{actionId}."""
+    type: Literal['ship_move'] | str
+    status: Literal['queued'] | str
+    actor: ActionActor
+    createdAt: datetime
+    updatedAt: datetime
+    endsAt: datetime
+    """Scheduled arrival time, including the departure preparation period."""
+    cancelableUntil: datetime
+    """End of the fifteen-minute cancellation window; scheduled departure time."""
+
+
+@dataclass
+class MoveAction(DataClassDictMixin):
+    shipId: str
+    action: OthersFleetMoveAcceptedAction
+
+
+@dataclass
+class IgnoredMove(DataClassDictMixin):
+    shipId: str
+    reason: str
+
+
+@dataclass
+class BlockedMove(DataClassDictMixin):
+    shipId: str
+    reason: str
+
+
+@dataclass
+class OthersFleetMoveResponse(DataClassDictMixin):
+    actions: List[MoveAction]
+    """Successfully scheduled moves; empty when no ship can start a move."""
+    ignored: List[IgnoredMove]
+    """Ships already in the requested sector; no action is created for them."""
+    blocked: List[BlockedMove]
+    """Ships whose individual move was refused. No action is created for these entries. Each entry contains a reason code, not an error object
+    or a human-readable message."""
