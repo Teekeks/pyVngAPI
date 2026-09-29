@@ -1,6 +1,8 @@
+from typing import List
+
 from vng_api.base import APISub, APIResponse
 from vng_api.types import Vector
-from vng_api.types.others import OthersShip, OthersPlanetHarvestAction, OthersFleetMoveAcceptedAction
+from vng_api.types.others import OthersShip, OthersPlanetHarvestAction, OthersFleetMoveAcceptedAction, OthersCraft
 
 
 class OthersShipSub(APISub):
@@ -52,3 +54,15 @@ class OthersShipSub(APISub):
         """
         return await self.client.api_call('delete', f'others/ships/{sid}/move', None,
                                           lambda x: OthersFleetMoveAcceptedAction.from_dict(x['action']))
+
+    async def active_crafts(self, sid: str) -> APIResponse[List[OthersCraft]]:
+        """List this mothership's crafts.
+
+        Returns a crafts collection with recipeId, status, actionId and endsAt when scheduled. To count ongoing ship construction, select
+        recipeId standard_ship and status queued or running. Read this state again after restarting a controller; terminal crafts do not occupy an
+        active construction slot.
+
+        :param sid: Ship ID
+        """
+        return await self.client.api_call('get', f'others/ships/{sid}/crafts', None,
+                                          lambda inp: [OthersCraft.from_dict(x) for x in inp['crafts']])
