@@ -1,7 +1,7 @@
 __all__ = ['OthersFleet', 'OthersShip', 'OthersShipMovement', 'OthersFuel', 'ShipLocation', 'OthersFleetSummary', 'OthersFleetMoveResponse',
            'ActionActor', 'MoveAction', 'BlockedMove', 'IgnoredMove', 'OthersFleetMoveAcceptedAction', 'OthersDepotSummary',
            'OthersPlanetHarvestAction', 'OthersCraft', 'OthersCraftResult', 'OthersCraftResultOutput', 'OthersCraftAction', 'OthersCraftResponse',
-           'OthersLaserLockAction']
+           'OthersLaserLockAction', 'OthersMissileLaunchResponse', 'OthersMissileLaunchAction']
 
 from dataclasses import dataclass
 from datetime import datetime
@@ -9,7 +9,7 @@ from typing import List, Any, Dict, Literal
 
 from mashumaro import DataClassDictMixin
 
-from vng_api.types import Sector, Vector
+from vng_api.types import Sector, Vector, MissileState
 
 type OthersShipType = Literal['mothership', 'standard'] | str
 
@@ -188,3 +188,19 @@ class OthersLaserLockAction(DataClassDictMixin):
     createdAt: datetime
     updatedAt: datetime
     actor: ActionActor
+
+
+@dataclass
+class OthersMissileLaunchAction(DataClassDictMixin):
+    id: str
+    type: Literal['missile_launch']
+    status: str
+    createdAt: datetime
+    updatedAt: datetime
+    actor: ActionActor
+
+
+@dataclass
+class OthersMissileLaunchResponse(DataClassDictMixin):
+    missile: MissileState
+    action: OthersMissileLaunchAction

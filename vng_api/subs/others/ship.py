@@ -3,7 +3,7 @@ from typing import List
 from vng_api.base import APISub, APIResponse
 from vng_api.types import Vector
 from vng_api.types.others import OthersShip, OthersPlanetHarvestAction, OthersFleetMoveAcceptedAction, OthersCraft, OthersCraftResponse, \
-    OthersLaserLockAction
+    OthersLaserLockAction, OthersMissileLaunchResponse
 
 
 class OthersShipSub(APISub):
@@ -99,3 +99,20 @@ class OthersShipSub(APISub):
         param = {'targetId': target_id}
         return await self.client.api_call('post', f'others/ships/{sid}/weapons/laser', param,
                                           lambda inp: OthersLaserLockAction.from_dict(inp['action']))
+
+    async def inginte_missile(self, sid: str, missile_id: str, target_id: str) -> APIResponse[OthersMissileLaunchResponse]:
+        """Schedule an immediate Others missile launch.
+
+        targetId may identify a moving missile in the firing ship's current sector to attempt an interception. Each request launches one inventory
+        missile at the selected target.
+
+        :param sid: Ship ID
+        :param missile_id: Missile ID
+        :param target_id: Target ID
+        """
+        param = {
+            'missileItemId': missile_id,
+            'targetId': target_id
+        }
+        return await self.client.api_call('post', f' /api/others/ships/{sid}/missile', param,
+                                          lambda x: OthersMissileLaunchResponse.from_dict(x))
