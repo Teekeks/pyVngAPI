@@ -1,6 +1,6 @@
 __all__ = ['OthersFleet', 'OthersShip', 'OthersShipMovement', 'OthersFuel', 'ShipLocation', 'OthersFleetSummary', 'OthersFleetMoveResponse',
            'ActionActor', 'MoveAction', 'BlockedMove', 'IgnoredMove', 'OthersFleetMoveAcceptedAction', 'OthersDepotSummary',
-           'OthersPlanetHarvestAction', 'OthersCraft', 'OthersCraftResult', 'OthersCraftResultOutput']
+           'OthersPlanetHarvestAction', 'OthersCraft', 'OthersCraftResult', 'OthersCraftResultOutput', 'OthersCraftAction', 'OthersCraftResponse']
 
 from dataclasses import dataclass
 from datetime import datetime
@@ -159,4 +159,21 @@ class OthersCraft(DataClassDictMixin):
     createdAt: datetime
     updatedAt: datetime
     endsAt: datetime
-    result: OthersCraftResult
+    result: OthersCraftResult | None = None
+
+
+@dataclass
+class OthersCraftAction(DataClassDictMixin):
+    id: str
+    type: Literal['others_craft']
+    status: str
+    createdAt: datetime
+    updatedAt: datetime
+    actor: ActionActor
+    endsAt: datetime
+
+
+@dataclass
+class OthersCraftResponse(DataClassDictMixin):
+    craft: OthersCraft
+    action: OthersCraftAction

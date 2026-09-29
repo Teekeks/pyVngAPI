@@ -2,7 +2,7 @@ from typing import List
 
 from vng_api.base import APISub, APIResponse
 from vng_api.types import Vector
-from vng_api.types.others import OthersShip, OthersPlanetHarvestAction, OthersFleetMoveAcceptedAction, OthersCraft
+from vng_api.types.others import OthersShip, OthersPlanetHarvestAction, OthersFleetMoveAcceptedAction, OthersCraft, OthersCraftResponse
 
 
 class OthersShipSub(APISub):
@@ -66,3 +66,25 @@ class OthersShipSub(APISub):
         """
         return await self.client.api_call('get', f'others/ships/{sid}/crafts', None,
                                           lambda inp: [OthersCraft.from_dict(x) for x in inp['crafts']])
+
+    async def craft(self, sid: str, recipe_id: str, auxiliary_id: str) -> APIResponse[OthersCraftResponse]:
+        """Schedule a mothership craft.
+
+        Requires an owned mothership and an available embarked assistant auxiliary. Ingredients are consumed from unreserved inventory resources
+        at acceptance, including inventory deuterium rather than propulsion fuel. The assistant stays busy until completion. Read canonical costs
+        and durations from GET /api/others/crafting/recipes.
+
+        standard_ship takes 604800 seconds (seven days) and consumes 6000 ECE of metals, 1000 of ice, 2000 of carbon_compounds and 100 of deuterium.
+        On completion it creates a standard ship in the mothership's fleet and current sector, with one auxiliary and an empty 50-point fuel tank.
+        The action result exposes output.kind and output.id. Several crafts can run concurrently using distinct assistants; any reconstruction
+        reserve or three-construction limit is a controller policy, not an API restriction.
+
+        :param sid: Ship ID
+        :param recipe_id: Id of target recipe
+        :param auxiliary_id: ID of auxiliary to use for craft
+        """
+        param = {
+            'recipeId': recipe_id,
+            'assistantAuxiliaryId': auxiliary_id
+        }
+        return await self.client.api_call('post', f'others/ships/{sid}/crafts', param, lambda inp: OthersCraftResponse.from_dict(inp))
