@@ -1,5 +1,6 @@
 from vng_api.base import APISub, APIResponse
-from vng_api.types.others import OthersShip, OthersPlanetHarvestAction
+from vng_api.types import Vector
+from vng_api.types.others import OthersShip, OthersPlanetHarvestAction, OthersFleetMoveAcceptedAction
 
 
 class OthersShipSub(APISub):
@@ -29,3 +30,17 @@ class OthersShipSub(APISub):
         }
         return await self.client.api_call('post', f'others/ships/{sid}/harvest', param,
                                           lambda x: OthersPlanetHarvestAction.from_dict(x['action']))
+
+    async def move(self, sid: str, target: Vector, leave_auxiliaries_behind: bool = False) -> APIResponse[OthersFleetMoveAcceptedAction]:
+        """Schedule an intersector move
+
+        :param sid: Ship ID
+        :param target: The target system coordinates
+        :param leave_auxiliaries_behind: if ture, leaves deployed auxiliaries behind
+        """
+        param = {
+            'target': target.to_dict(),
+            'leaveAuxiliariesBehind': leave_auxiliaries_behind
+        }
+        return await self.client.api_call('post', f'others/ships/{sid}/move', param,
+                                          lambda x: OthersFleetMoveAcceptedAction.from_dict(x['action']))
