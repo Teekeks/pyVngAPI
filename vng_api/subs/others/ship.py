@@ -44,3 +44,11 @@ class OthersShipSub(APISub):
         }
         return await self.client.api_call('post', f'others/ships/{sid}/move', param,
                                           lambda x: OthersFleetMoveAcceptedAction.from_dict(x['action']))
+
+    async def cancel_move(self, sid: str) -> APIResponse[OthersFleetMoveAcceptedAction]:
+        """Request cancellation during the fifteen-minute window
+
+        :param sid: Ship ID
+        """
+        return await self.client.api_call('delete', f'others/ships/{sid}/move', None,
+                                          lambda x: OthersFleetMoveAcceptedAction.from_dict(x['action']))
