@@ -2,7 +2,8 @@ from typing import List
 
 from vng_api.base import APISub, APIResponse
 from vng_api.types import Vector
-from vng_api.types.others import OthersShip, OthersPlanetHarvestAction, OthersFleetMoveAcceptedAction, OthersCraft, OthersCraftResponse
+from vng_api.types.others import OthersShip, OthersPlanetHarvestAction, OthersFleetMoveAcceptedAction, OthersCraft, OthersCraftResponse, \
+    OthersLaserLockAction
 
 
 class OthersShipSub(APISub):
@@ -88,3 +89,13 @@ class OthersShipSub(APISub):
             'assistantAuxiliaryId': auxiliary_id
         }
         return await self.client.api_call('post', f'others/ships/{sid}/crafts', param, lambda inp: OthersCraftResponse.from_dict(inp))
+
+    async def laser_lock(self, sid: str, target_id: str) -> APIResponse[OthersLaserLockAction]:
+        """Schedule an immediate local laser lock
+
+        :param sid: Ship ID
+        :param target_id: Target ID
+        """
+        param = {'targetId': target_id}
+        return await self.client.api_call('post', f'others/ships/{sid}/weapons/laser', param,
+                                          lambda inp: OthersLaserLockAction.from_dict(inp['action']))
