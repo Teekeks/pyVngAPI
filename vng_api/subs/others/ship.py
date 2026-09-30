@@ -131,5 +131,5 @@ class OthersShipSub(APISub):
             'missileItemId': missile_id,
             'targetId': target_id
         }
-        return await self.client.api_call('post', f' /api/others/ships/{sid}/missile', param,
+        return await self.client.api_call('post', f'others/ships/{sid}/missile', param,
                                           lambda x: OthersMissileLaunchResponse.from_dict(x))

@@ -14,7 +14,7 @@ class DamageWarningSub(APISub):
 
         :param pid: Probe ID
         """
-        return await self.client.api_call('get', f'/api/probe/{pid}/damage-warnings', None,
+        return await self.client.api_call('get', f'probe/{pid}/damage-warnings', None,
                                           lambda inp: ProbeDamageWarningResponse.from_dict(inp))
 
     async def read(self, pid: int, warning_id: str) -> APIResponse[Alert]:
@@ -23,7 +23,7 @@ class DamageWarningSub(APISub):
         :param pid: Probe ID
         :param warning_id: Warning ID
         """
-        data = await self.client.api_call('patch', f'/api/probe/{pid}/damage-warnings/{warning_id}', None,
+        data = await self.client.api_call('patch', f'probe/{pid}/damage-warnings/{warning_id}', None,
                                           lambda inp: Alert.from_dict(inp['damageWarning']))
         if data.success:
             await self.client.issue_cache_update(data.data)
@@ -38,4 +38,4 @@ class DamageWarningSub(APISub):
         :param pid: Probe ID
         :param warning_id: Warning ID
         """
-        return await self.client.api_call('delete', f'/api/probe/{pid}/damage-warnings/{warning_id}', None, None)
+        return await self.client.api_call('delete', f'probe/{pid}/damage-warnings/{warning_id}', None, None)

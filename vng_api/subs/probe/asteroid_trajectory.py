@@ -16,7 +16,7 @@ class AsteroidTrajectorySub(APISub):
         :param pid: Probe ID
         :param trajectory_id:  Opaque trajectory id returned at launch.
         """
-        return await self.client.api_call('get', f'/api/probe/{pid}/asteroid-trajectories/{trajectory_id}', None,
+        return await self.client.api_call('get', f'probe/{pid}/asteroid-trajectories/{trajectory_id}', None,
                                           lambda inp: AsteroidTrajectory.from_dict(inp['trajectory']))
 
     async def launch(self,
@@ -51,6 +51,6 @@ class AsteroidTrajectorySub(APISub):
             'targetSpeedC': target_speed_c,
             'target': target.to_dict() if target is not None else None,
         })
-        return await self.client.api_call('post', f'/api/probe/{pid}/asteroids/{asteroid_id}/trajectories', param,
+        return await self.client.api_call('post', f'probe/{pid}/asteroids/{asteroid_id}/trajectories', param,
                                           lambda inp: AsteroidTrajectory.from_dict(inp['trajectory']))
 

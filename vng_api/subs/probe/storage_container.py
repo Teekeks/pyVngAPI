@@ -23,7 +23,7 @@ class StorageContainerSub(APISub):
 
         :param pid: Probe ID
         """
-        return await self.client.api_call('get', f'/api/probe/{pid}/storage-containers', None,
+        return await self.client.api_call('get', f'probe/{pid}/storage-containers', None,
                                           lambda inp: [StorageContainer.from_dict(c) for c in inp['containers']])
 
     async def rename(self, pid: int, container_id: str, label: str) -> APIResponse[StorageContainerInventoryResponse]:
@@ -46,7 +46,7 @@ class StorageContainerSub(APISub):
         :param container_id: Container ID
         :param rules: New rules
         """
-        return await self.client.api_call('patch', f'/api/probe/{pid}/storage-containers/{container_id}/rules', rules.to_dict(),
+        return await self.client.api_call('patch', f'probe/{pid}/storage-containers/{container_id}/rules', rules.to_dict(),
                                           lambda inp: StorageContainerInventoryResponse.from_dict(inp))
 
     async def reassign_crafting_reservation(self, pid: int, container_id: str) -> APIResponse[CraftingReservationResponse]:
@@ -59,5 +59,5 @@ class StorageContainerSub(APISub):
         :param pid: Probe ID
         :param container_id: Container ID
         """
-        return await self.client.api_call('post', f'/api/probe/{pid}/storage-containers/{container_id}/crafting-reservations/reassign',
+        return await self.client.api_call('post', f'probe/{pid}/storage-containers/{container_id}/crafting-reservations/reassign',
                                           None, lambda inp: CraftingReservationResponse.from_dict(inp))

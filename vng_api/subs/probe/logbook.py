@@ -24,7 +24,7 @@ class LogBookSub(APISub):
         :param offset: Number of logbook pages to skip before returning the page.
         :param limit: Maximum number of logbook pages to return. Defaults to 10.
         """
-        url = build_url(f'/api/probe/{pid}/logbook-pages', {'offset': offset, 'limit': limit})
+        url = build_url(f'probe/{pid}/logbook-pages', {'offset': offset, 'limit': limit})
         return await self.client.api_call('get', url, lambda inp: ProbeLogbookPagesResponse.from_dict(inp))
 
     async def add_page(self, pid: int, title: str, content: str) -> APIResponse[LogbookPage]:
@@ -45,7 +45,7 @@ class LogBookSub(APISub):
         :param pid: Probe ID
         :param page_id: Page ID
         """
-        return await self.client.api_call('delete', f'/api/probe/{pid}/logbook-page/{page_id}', None, None)
+        return await self.client.api_call('delete', f'probe/{pid}/logbook-page/{page_id}', None, None)
 
     async def update(self, pid: int, page_id: int, title: str | None, content: str | None) -> APIResponse[LogbookPage]:
         """Update a probe logbook page
@@ -59,7 +59,7 @@ class LogBookSub(APISub):
         body = remove_none({'title': title, 'content': content})
         if len(body.keys()) == 0:
             raise ValueError('Specify at least one of title and content')
-        ret = await self.client.api_call('patch', f'/api/probe/{pid}/logbook-page/{page_id}', body, lambda inp: LogbookPage.from_dict(inp['page']))
+        ret = await self.client.api_call('patch', f'probe/{pid}/logbook-page/{page_id}', body, lambda inp: LogbookPage.from_dict(inp['page']))
         if ret.success:
             await self.client.issue_cache_update(ret.data)
         return ret

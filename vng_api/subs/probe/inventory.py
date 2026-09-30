@@ -13,7 +13,7 @@ class InventorySub(APISub):
         :param pid: Probe ID
         :param item_id: Item ID
         """
-        return await self.client.api_call('get', f'/api/probe/{pid}/inventory/{item_id}', None,
+        return await self.client.api_call('get', f'probe/{pid}/inventory/{item_id}', None,
                                           lambda inp: Item.from_dict(inp['item']))
 
     async def jettison(self,
@@ -34,7 +34,7 @@ class InventorySub(APISub):
         :param container_id: Optional source container id for stored resource jettison.
         """
         param = remove_none({'amount': amount, 'containerId': container_id})
-        ret = await self.client.api_call('post', f'/api/probe/{pid}/inventory/{item_id}/jettison', param,
+        ret = await self.client.api_call('post', f'probe/{pid}/inventory/{item_id}/jettison', param,
                                          lambda inp: ProbeInventoryJettisonResponse.from_dict(inp))
         if ret.success:
             await self.client.issue_cache_update(ret.data.inventory)

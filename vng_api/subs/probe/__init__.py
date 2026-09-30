@@ -114,5 +114,5 @@ class ProbeSub(APISub):
         Available only when the current probe is dead or trapped by a black hole.
         Deletes the terminal probe state, assigns the player's last stable mind snapshot to a fresh probe chassis, resets the player's local reference
         frame, and marks the new origin as 0,0,0."""
-        return await self.client.api_call('post', '/api/probe/mind-snapshot/reassign', None,
+        return await self.client.api_call('post', 'probe/mind-snapshot/reassign', None,
                                           lambda inp: ProbeMindSnapshotReassignResponse.from_dict(inp))
