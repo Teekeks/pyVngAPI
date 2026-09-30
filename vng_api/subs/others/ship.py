@@ -34,6 +34,14 @@ class OthersShipSub(APISub):
         return await self.client.api_call('post', f'others/ships/{sid}/harvest', param,
                                           lambda x: OthersPlanetHarvestAction.from_dict(x['action']))
 
+    async def cancel_harvest(self, sid: str) -> APIResponse[OthersPlanetHarvestAction]:
+        """Interrupt and recall the harvest swarm
+
+        :param sid: Ship ID
+        """
+        return await self.client.api_call('delete', f'others/ships/{sid}/harves', None,
+                                          lambda x: OthersPlanetHarvestAction.from_dict(x['action']))
+
     async def move(self, sid: str, target: Vector, leave_auxiliaries_behind: bool = False) -> APIResponse[OthersFleetMoveAcceptedAction]:
         """Schedule an intersector move
 
