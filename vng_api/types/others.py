@@ -1,7 +1,7 @@
 __all__ = ['OthersFleet', 'OthersShip', 'OthersShipMovement', 'OthersFuel', 'ShipLocation', 'OthersFleetSummary', 'OthersFleetMoveResponse',
            'ActionActor', 'MoveAction', 'BlockedMove', 'IgnoredMove', 'OthersFleetMoveAcceptedAction', 'OthersDepotSummary',
            'OthersPlanetHarvestAction', 'OthersCraft', 'OthersCraftResult', 'OthersCraftResultOutput', 'OthersCraftAction', 'OthersCraftResponse',
-           'OthersLaserLockAction', 'OthersMissileLaunchResponse', 'OthersMissileLaunchAction']
+           'OthersLaserLockAction', 'OthersMissileLaunchResponse', 'OthersMissileLaunchAction', 'OthersAuxiliariesResponse', 'OthersAuxiliary']
 
 from dataclasses import dataclass
 from datetime import datetime
@@ -9,7 +9,7 @@ from typing import List, Any, Dict, Literal
 
 from mashumaro import DataClassDictMixin
 
-from vng_api.types import Sector, Vector, MissileState
+from vng_api.types import Sector, Vector, MissileState, ResourceAmounts
 
 type OthersShipType = Literal['mothership', 'standard'] | str
 
@@ -204,3 +204,23 @@ class OthersMissileLaunchAction(DataClassDictMixin):
 class OthersMissileLaunchResponse(DataClassDictMixin):
     missile: MissileState
     action: OthersMissileLaunchAction
+
+
+@dataclass
+class OthersAuxiliary(DataClassDictMixin):
+    id: str
+    status: str
+    locationType: str
+    spatialState: str
+    capacityEce: float
+    cargo: ResourceAmounts
+    sector: Sector | None = None
+    """Present only when the auxiliary is separated from its carrier, or while its carrier is in transit. 
+    Coordinates are relative to the owning player's home."""
+    action: Dict[Any, Any] | None = None
+
+
+@dataclass
+class OthersAuxiliariesResponse(DataClassDictMixin):
+    auxiliaries: List[OthersAuxiliary]
+    nextCursor: str | None = None

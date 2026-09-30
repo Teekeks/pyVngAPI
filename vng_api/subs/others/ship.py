@@ -1,12 +1,21 @@
-from typing import List
+from typing import List, TYPE_CHECKING
 
 from vng_api.base import APISub, APIResponse
 from vng_api.types import Vector
 from vng_api.types.others import OthersShip, OthersPlanetHarvestAction, OthersFleetMoveAcceptedAction, OthersCraft, OthersCraftResponse, \
     OthersLaserLockAction, OthersMissileLaunchResponse
+from vng_api.subs.others.auxiliary import AuxiliarySub
+
+
+if TYPE_CHECKING:
+    from vng_api.client import APIClient
 
 
 class OthersShipSub(APISub):
+
+    def __init__(self, client: "APIClient"):
+        super().__init__(client)
+        self.auxiliary: AuxiliarySub = AuxiliarySub(client)
 
     async def get(self, sid: str) -> APIResponse[OthersShip]:
         """Get one owned Others ship
