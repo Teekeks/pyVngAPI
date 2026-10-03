@@ -3,7 +3,7 @@ from typing import List
 from vng_api.base import APISub, APIResponse
 from vng_api.helper.internal import build_url
 from vng_api.types import ResourceAmounts
-from vng_api.types.others import OthersAuxiliariesResponse, OthersAuxiliary, OthersDepotTransferAction
+from vng_api.types.others import OthersAuxiliariesResponse, OthersAuxiliary, OthersDepotTransferAction, OthersDepotActionBase
 
 
 class AuxiliarySub(APISub):
@@ -47,3 +47,19 @@ class AuxiliarySub(APISub):
         }
         return await self.client.api_call('post', f'others/ships/{sid}/auxiliaries/{auxiliary_id}/depot-deposits', param,
                                           lambda x: OthersDepotTransferAction.from_dict(x['action']))
+
+    async def build_germination_depot(self, sid: str, auxiliary_id: str) -> APIResponse[OthersDepotActionBase]:
+        """Build a germination depot
+
+        An idle embarked auxiliary of an idle mothership reserves 2 ECE of metals and builds for 1800 seconds.
+        Black-hole sectors are forbidden. Materials are lost on interruption. Each successful action creates one shared,
+        indestructible, unlimited-capacity SQL depot. No client-supplied cost, duration or capacity is accepted.
+        Successful completion also records the depot sector in the builder fleet's known depots,
+        exposed by GET /api/others/fleets/{fleetId}/known-depots. Starting or interrupting construction
+        does not record a discovery.
+
+        :param sid: Ship ID
+        :param auxiliary_id: Executing auxiliary ID
+        """
+        return await self.client.api_call('post', f'others/ships/{sid}/auxiliaries/{auxiliary_id}/build-germination-depot', None,
+                                          lambda x: OthersDepotActionBase.from_dict(x['action']))
