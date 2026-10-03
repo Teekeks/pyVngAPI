@@ -1,9 +1,11 @@
 __all__ = ['OthersFleet', 'OthersShip', 'OthersShipMovement', 'OthersFuel', 'ShipLocation', 'OthersFleetSummary', 'OthersFleetMoveResponse',
            'ActionActor', 'MoveAction', 'BlockedMove', 'IgnoredMove', 'OthersFleetMoveAcceptedAction', 'OthersDepotSummary',
            'OthersPlanetHarvestAction', 'OthersCraft', 'OthersCraftResult', 'OthersCraftResultOutput', 'OthersCraftAction', 'OthersCraftResponse',
-           'OthersLaserLockAction', 'OthersMissileLaunchResponse', 'OthersMissileLaunchAction', 'OthersAuxiliariesResponse', 'OthersAuxiliary']
+           'OthersLaserLockAction', 'OthersMissileLaunchResponse', 'OthersMissileLaunchAction', 'OthersAuxiliariesResponse', 'OthersAuxiliary',
+           'OthersDepotContent', 'OthersDepotActionBase', 'OthersError', 'OthersDepotTransferAction', 'OthersDepotTransferResult',
+           'OthersDepotTransfer']
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from datetime import datetime
 from typing import List, Any, Dict, Literal
 
@@ -224,3 +226,68 @@ class OthersAuxiliary(DataClassDictMixin):
 class OthersAuxiliariesResponse(DataClassDictMixin):
     auxiliaries: List[OthersAuxiliary]
     nextCursor: str | None = None
+
+
+@dataclass
+class OthersError(DataClassDictMixin):
+    code: str
+    message: str
+
+
+@dataclass
+class OthersDepotActionBase(DataClassDictMixin):
+    id: str
+    """Opaque action id retained after the auxiliary disappears."""
+    type: Literal['build_germination_depot', 'depot_deposit', 'depot_withdrawal'] | str
+    status: Literal['queued', 'succeeded', 'failed', 'canceled'] | str
+    """queued until terminal settlement; succeeded on completion, canceled on carrier departure/destruction, failed on auxiliary destruction. 
+    Completion already due at interruption takes precedence."""
+    actor: ActionActor
+    createdAt: datetime
+    updatedAt: datetime
+    endsAt: datetime
+    """Scheduled deadline; retained even when interrupted earlier."""
+    completedAt: datetime | None = None
+    """Present after terminal settlement; omitted while queued."""
+    error: OthersError | None = None
+    """Present only when an error was recorded. An interruption can have a result without error."""
+
+
+@dataclass
+class OthersDepotTransfer(DataClassDictMixin):
+    depotId: str
+    resources: ResourceAmounts
+    itemIds: List[str]
+    capacityEce: float
+    roundTrips: int
+    """Number of actual indivisible loads; not just total volume divided by capacity."""
+    durationSeconds: int
+    """roundTrips multiplied by 600 seconds (300 outbound and 300 returning)."""
+
+
+@dataclass
+class OthersDepotContent(DataClassDictMixin):
+    resources: ResourceAmounts
+    itemIds: List[str]
+
+
+@dataclass
+class OthersDepotTransferResult(DataClassDictMixin):
+    outcome: Literal['delivered', 'carrier_departure', 'carrier_destroyed', 'auxiliary_destroyed'] | str
+    delivered: OthersDepotContent
+    """Content credited to destination. Includes the whole outgoing deposit on carrier departure/destruction; 
+    interrupted withdrawals deliver nothing."""
+    lost: OthersDepotContent
+    """Only the virtual load carried when the auxiliary was destroyed. An empty leg loses nothing; 
+    earlier virtual trips are not credited separately."""
+    released: OthersDepotContent
+    """Content left at its source and unreserved, without crediting it again."""
+    dormantAuxiliaryId: str | None = None
+    """Present on carrier_departure or carrier_destroyed; public sector-object id of the intact dormant auxiliary. 
+    Absent on success or auxiliary destruction."""
+
+
+@dataclass
+class OthersDepotTransferAction(OthersDepotActionBase, DataClassDictMixin):
+    transfer: OthersDepotTransfer | None = None
+    result: OthersDepotTransferResult | None = None
