@@ -3,9 +3,9 @@ __all__ = ['OthersFleet', 'OthersShip', 'OthersShipMovement', 'OthersFuel', 'Shi
            'OthersPlanetHarvestAction', 'OthersCraft', 'OthersCraftResult', 'OthersCraftResultOutput', 'OthersCraftAction', 'OthersCraftResponse',
            'OthersLaserLockAction', 'OthersMissileLaunchResponse', 'OthersMissileLaunchAction', 'OthersAuxiliariesResponse', 'OthersAuxiliary',
            'OthersDepotContent', 'OthersDepotActionBase', 'OthersError', 'OthersDepotTransferAction', 'OthersDepotTransferResult',
-           'OthersDepotTransfer']
+           'OthersDepotTransfer', 'OthersResourceAmounts', 'OthersResourceAmount', 'OthersInventoryItem', 'OthersShipInventory']
 
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from datetime import datetime
 from typing import List, Any, Dict, Literal
 
@@ -291,3 +291,34 @@ class OthersDepotTransferResult(DataClassDictMixin):
 class OthersDepotTransferAction(OthersDepotActionBase, DataClassDictMixin):
     transfer: OthersDepotTransfer | None = None
     result: OthersDepotTransferResult | None = None
+
+
+@dataclass
+class OthersResourceAmount(DataClassDictMixin):
+    amount: float
+    reserved: float
+
+
+@dataclass
+class OthersResourceAmounts(DataClassDictMixin):
+    deuterium: OthersResourceAmount
+    metals: OthersResourceAmount
+    ice: OthersResourceAmount
+    carbon_compounds: OthersResourceAmount
+
+
+@dataclass
+class OthersInventoryItem(DataClassDictMixin):
+    id: str
+    type: str
+    containerSpaceEce: float
+
+
+@dataclass
+class OthersShipInventory(DataClassDictMixin):
+    shipId: str
+    capacityEce: float
+    usedEce: float
+    reservedEce: float
+    resources: OthersResourceAmounts
+    items: List[OthersInventoryItem]

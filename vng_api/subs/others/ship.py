@@ -5,6 +5,7 @@ from vng_api.types import Vector
 from vng_api.types.others import OthersShip, OthersPlanetHarvestAction, OthersFleetMoveAcceptedAction, OthersCraft, OthersCraftResponse, \
     OthersLaserLockAction, OthersMissileLaunchResponse
 from vng_api.subs.others.auxiliary import AuxiliarySub
+from vng_api.subs.others.inventory import OthersShipInventorySub
 
 
 if TYPE_CHECKING:
@@ -16,6 +17,7 @@ class OthersShipSub(APISub):
     def __init__(self, client: "APIClient"):
         super().__init__(client)
         self.auxiliary: AuxiliarySub = AuxiliarySub(client)
+        self.inventory: OthersShipInventorySub = OthersShipInventorySub(client)
 
     async def get(self, sid: str) -> APIResponse[OthersShip]:
         """Get one owned Others ship
