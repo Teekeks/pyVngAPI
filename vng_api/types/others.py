@@ -8,9 +8,9 @@ __all__ = ['OthersFleet', 'OthersShip', 'OthersShipMovement', 'OthersFuel', 'Shi
            'OthersInventoryResourceJettisonResult', 'OthersInventoryItemJettisonResult', 'OthersInventoryJettisonResult',
            'OthersInventoryJettisonResponse']
 
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from datetime import datetime
-from typing import List, Any, Dict, Literal, Annotated
+from typing import List, Any, Dict, Literal
 
 from mashumaro import DataClassDictMixin
 from mashumaro.config import BaseConfig
@@ -370,7 +370,8 @@ class OthersInventoryTransferCreateResponse(DataClassDictMixin):
 
 @dataclass
 class OthersInventoryJettisonResult:
-    pass
+    class Config(BaseConfig):
+        discriminator = Discriminator(field='kind', include_subtypes=True)
 
 
 @dataclass
@@ -392,5 +393,5 @@ class OthersInventoryItemJettisonResult(OthersInventoryJettisonResult, DataClass
 
 @dataclass
 class OthersInventoryJettisonResponse(DataClassDictMixin):
-    jettisoned: Annotated[OthersInventoryJettisonResult, Discriminator(field='kind', include_subtypes=True)]
+    jettisoned: OthersInventoryJettisonResult
     inventory: OthersShipInventory
