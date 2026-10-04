@@ -4,13 +4,17 @@ __all__ = ['OthersFleet', 'OthersShip', 'OthersShipMovement', 'OthersFuel', 'Shi
            'OthersLaserLockAction', 'OthersMissileLaunchResponse', 'OthersMissileLaunchAction', 'OthersAuxiliariesResponse', 'OthersAuxiliary',
            'OthersDepotContent', 'OthersDepotActionBase', 'OthersError', 'OthersDepotTransferAction', 'OthersDepotTransferResult',
            'OthersDepotTransfer', 'OthersResourceAmounts', 'OthersResourceAmount', 'OthersInventoryItem', 'OthersShipInventory',
-           'OthersInventoryTransferCreateResponse', 'OthersInventoryTransfer', 'OthersInventoryTransferAction', 'OthersTransferResult']
+           'OthersInventoryTransferCreateResponse', 'OthersInventoryTransfer', 'OthersInventoryTransferAction', 'OthersTransferResult',
+           'OthersInventoryResourceJettisonResult', 'OthersInventoryItemJettisonResult', 'OthersInventoryJettisonResult',
+           'OthersInventoryJettisonResponse']
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from datetime import datetime
-from typing import List, Any, Dict, Literal
+from typing import List, Any, Dict, Literal, Annotated
 
 from mashumaro import DataClassDictMixin
+from mashumaro.config import BaseConfig
+from mashumaro.types import Discriminator
 
 from vng_api.types import Sector, Vector, MissileState, ResourceAmounts, ResourceType
 
@@ -362,3 +366,31 @@ class OthersInventoryTransferAction(DataClassDictMixin):
 class OthersInventoryTransferCreateResponse(DataClassDictMixin):
     transfer: OthersInventoryTransfer
     action: OthersInventoryTransferAction
+
+
+@dataclass
+class OthersInventoryJettisonResult:
+    pass
+
+
+@dataclass
+class OthersInventoryResourceJettisonResult(OthersInventoryJettisonResult, DataClassDictMixin):
+    kind: Literal['resource']
+    resourceType: ResourceType
+    amount: float
+
+
+@dataclass
+class OthersInventoryItemJettisonResult(OthersInventoryJettisonResult, DataClassDictMixin):
+    kind: Literal['item']
+    itemId: str
+    type: str
+    objectId: str
+    driftingQuantity: int
+    containerSpaceEce: float
+
+
+@dataclass
+class OthersInventoryJettisonResponse(DataClassDictMixin):
+    jettisoned: Annotated[OthersInventoryJettisonResult, Discriminator(field='kind', include_subtypes=True)]
+    inventory: OthersShipInventory
