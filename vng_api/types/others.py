@@ -3,7 +3,8 @@ __all__ = ['OthersFleet', 'OthersShip', 'OthersShipMovement', 'OthersFuel', 'Shi
            'OthersPlanetHarvestAction', 'OthersCraft', 'OthersCraftResult', 'OthersCraftResultOutput', 'OthersCraftAction', 'OthersCraftResponse',
            'OthersLaserLockAction', 'OthersMissileLaunchResponse', 'OthersMissileLaunchAction', 'OthersAuxiliariesResponse', 'OthersAuxiliary',
            'OthersDepotContent', 'OthersDepotActionBase', 'OthersError', 'OthersDepotTransferAction', 'OthersDepotTransferResult',
-           'OthersDepotTransfer', 'OthersResourceAmounts', 'OthersResourceAmount', 'OthersInventoryItem', 'OthersShipInventory']
+           'OthersDepotTransfer', 'OthersResourceAmounts', 'OthersResourceAmount', 'OthersInventoryItem', 'OthersShipInventory',
+           'OthersInventoryTransferCreateResponse', 'OthersInventoryTransfer', 'OthersInventoryTransferAction', 'OthersTransferResult']
 
 from dataclasses import dataclass
 from datetime import datetime
@@ -11,7 +12,7 @@ from typing import List, Any, Dict, Literal
 
 from mashumaro import DataClassDictMixin
 
-from vng_api.types import Sector, Vector, MissileState, ResourceAmounts
+from vng_api.types import Sector, Vector, MissileState, ResourceAmounts, ResourceType
 
 type OthersShipType = Literal['mothership', 'standard'] | str
 
@@ -322,3 +323,42 @@ class OthersShipInventory(DataClassDictMixin):
     reservedEce: float
     resources: OthersResourceAmounts
     items: List[OthersInventoryItem]
+
+
+@dataclass
+class OthersTransferResult(DataClassDictMixin):
+    outcome: Literal['transferred'] | str
+
+
+@dataclass
+class OthersInventoryTransfer(DataClassDictMixin):
+    id: str
+    kind: str
+    status: str
+    actionId: str
+    endsAt: datetime
+    result: OthersTransferResult | None = None
+    error: OthersError | None = None
+    resourceType: ResourceType | None = None
+    amount: float | None = None
+    itemIds: List[str] | None = None
+
+
+@dataclass
+class OthersInventoryTransferAction(DataClassDictMixin):
+    id: str
+    type: Literal['inventory_transfer'] | str
+    status: Literal['queued', 'succeeded', 'failed'] | str
+    actor: ActionActor
+    createdAt: datetime
+    updatedAt: datetime
+    endsAt: datetime
+    completedAt: datetime | None = None
+    result: Dict[Any, Any] | None = None
+    error: Dict[Any, Any] | None = None
+
+
+@dataclass
+class OthersInventoryTransferCreateResponse(DataClassDictMixin):
+    transfer: OthersInventoryTransfer
+    action: OthersInventoryTransferAction
