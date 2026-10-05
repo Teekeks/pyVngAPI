@@ -6,7 +6,8 @@ __all__ = ['OthersFleet', 'OthersShip', 'OthersShipMovement', 'OthersFuel', 'Shi
            'OthersDepotTransfer', 'OthersResourceAmounts', 'OthersResourceAmount', 'OthersInventoryItem', 'OthersShipInventory',
            'OthersInventoryTransferCreateResponse', 'OthersInventoryTransfer', 'OthersInventoryTransferAction', 'OthersTransferResult',
            'OthersInventoryResourceJettisonResult', 'OthersInventoryItemJettisonResult', 'OthersInventoryJettisonResult',
-           'OthersInventoryJettisonResponse']
+           'OthersInventoryJettisonResponse', 'OthersScan', 'OthersObservedProbe', 'OthersSectorObservation', 'OthersObservedSectorObject',
+           'OthersObjectMovement', 'OthersScanSource']
 
 from dataclasses import dataclass
 from datetime import datetime
@@ -16,7 +17,7 @@ from mashumaro import DataClassDictMixin
 from mashumaro.config import BaseConfig
 from mashumaro.types import Discriminator
 
-from vng_api.types import Sector, Vector, MissileState, ResourceAmounts, ResourceType
+from vng_api.types import Sector, Vector, MissileState, ResourceAmounts, ResourceType, AutonomousUnitCarrier
 
 type OthersShipType = Literal['mothership', 'standard'] | str
 
@@ -395,3 +396,64 @@ class OthersInventoryItemJettisonResult(OthersInventoryJettisonResult, DataClass
 class OthersInventoryJettisonResponse(DataClassDictMixin):
     jettisoned: OthersInventoryJettisonResult
     inventory: OthersShipInventory
+
+
+@dataclass
+class OthersObjectMovement(DataClassDictMixin):
+    direction: Vector
+
+
+@dataclass
+class OthersObservedSectorObject(DataClassDictMixin):
+    id: str | int | None = None
+    type: str | None = None
+    observedClass: str | None = None
+    """Present on dynamically observed ships and projectiles."""
+    status: str | None = None
+    """Current status of a dynamically observed ship."""
+    estimated: bool | None = None
+    harvestable: bool | None = None
+    """Present only on planets observed locally by an Others fleet ship, including planet entries nested in bookmarkTargets and minableTargets. 
+    True when remaining planetary resources total strictly more than 5 ECE."""
+    movement: OthersObjectMovement | None = None
+
+
+@dataclass
+class OthersObservedProbe(DataClassDictMixin):
+    id: int
+    name: str
+    status: Literal['idle', 'preparing', 'accelerating', 'cruising', 'decelerating', 'orbiting', 'disabled', 'trapped_by_black_hole', 'dead'] | str
+
+
+@dataclass
+class OthersScanSource(DataClassDictMixin):
+    id: str
+    kind: Literal['others_ship'] | str
+
+
+@dataclass
+class OthersScan(DataClassDictMixin):
+    currentSectorResidenceSeconds: int
+    requiredResidenceSeconds: int
+    scanQuality: int
+    source: OthersScanSource
+
+
+@dataclass
+class OthersSectorObservation(DataClassDictMixin):
+    relativeCoordinates: Vector
+    distance: int
+    """Distance from the closest active ship in the designated fleet."""
+    knowledgeLevel: Literal['detailed', 'neighbor_scan', 'distant_scan', 'long_range_estimation'] | str
+    confidence: float
+    scan: OthersScan
+    objects: List[OthersObservedSectorObject] | None = None
+    """Detailed natural sector content and observable moving projectiles. Detected ship entries are included only when a ship of the designated 
+    fleet is physically present in this sector."""
+    probes: List[OthersObservedProbe] | None = None
+    """Probes physically observable in the sector and their live status. Present, possibly empty, only when a ship of the designated fleet is 
+    physically present in the requested sector."""
+    estimatedObjects: Dict[Any, Any] | None = None
+    possibleObjects: List[str] | None = None
+    navigationalRisk: str | None = None
+    message: str | None = None
