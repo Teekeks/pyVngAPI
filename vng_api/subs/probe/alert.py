@@ -2,7 +2,7 @@ from typing import Literal
 
 from vng_api.base import APISub, APIResponse
 from vng_api.helper.internal import build_url
-from vng_api.types import ProbeAlertResponse, Alert, ProbeAlertsMarkAllReadResponse
+from vng_api.types import ProbeAlertResponse, Alert, ProbeAlertsMarkAllReadResponse, ProbeAlertsDeleteAllResponse
 
 
 class AlertSub(APISub):
@@ -54,3 +54,14 @@ class AlertSub(APISub):
         """
         return await self.client.api_call('post', f'probe/{pid}/alerts/mark-all-read', None,
                                           lambda inp: ProbeAlertsMarkAllReadResponse.from_dict(inp))
+
+    async def delete_all(self, pid: int) -> APIResponse[ProbeAlertsDeleteAllResponse]:
+        """Delete all persistent probe alerts
+
+        Permanently deletes all persistent alerts, read or unread and of any type, for the selected owned probe. No request body is required.
+        Returns the number of deleted alerts, or zero when none exist. Other probes and live sector warnings are unaffected.
+
+        :param pid: Probe ID
+        """
+        return await self.client.api_call('delete', f'probe/{pid}/alerts', None,
+                                          lambda inp: ProbeAlertsDeleteAllResponse.from_dict(inp))
