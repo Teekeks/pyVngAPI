@@ -14,7 +14,8 @@ from vng_api.subs.probe.storage_container import StorageContainerSub
 from vng_api.subs.probe.alert import AlertSub
 from vng_api.subs.probe.inventory import InventorySub
 from vng_api.subs.probe.logbook import LogBookSub
-from vng_api.types import ProbeType, OutOfRangeProbe, Probe, ProbeSummaryList, Vector, Movement, ProbeMindSnapshotReassignResponse
+from vng_api.types import ProbeType, OutOfRangeProbe, Probe, ProbeSummaryList, Vector, Movement, ProbeMindSnapshotReassignResponse, \
+    SectorStorageTransfer
 
 if TYPE_CHECKING:
     from vng_api.client import APIClient
@@ -116,3 +117,13 @@ class ProbeSub(APISub):
         frame, and marks the new origin as 0,0,0."""
         return await self.client.api_call('post', 'probe/mind-snapshot/reassign', None,
                                           lambda inp: ProbeMindSnapshotReassignResponse.from_dict(inp))
+
+    async def get_transfer(self, pid: int, transfer_id: str) -> APIResponse[SectorStorageTransfer]:
+        """Read a durable Manny transfer result
+
+        :param pid: Probe ID
+        :param transfer_id: Transfer ID
+        """
+        return await self.client.api_call('get', f'probe/{pid}/storage-transfers/{transfer_id}', None,
+                                          lambda inp: SectorStorageTransfer.from_dict(inp['transfer']))
+

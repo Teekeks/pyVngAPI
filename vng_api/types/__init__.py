@@ -15,7 +15,8 @@ __all__ = ['Vector', 'Sector', 'SectorVisitHistory', 'SectorObservation', 'Secto
            'ProbeDamageWarningResponse', 'Session', 'ProbeInventoryJettisonResponse', 'Jettisoned', 'StorageMoveResponse', 'AsteroidSpeed',
            'ProbeMindSnapshotReassignResponse', 'LogbookPage', 'LogbookPageSummary', 'ProbeLogbookPagesResponse', 'AsteroidTrajectory',
            'MannyStorageTransferResources', 'SectorStorageResource', 'SectorStorageInventory', 'SectorStorageItem', 'ProbeAlertsMarkAllReadResponse',
-           'ProbeAlertsDeleteAllResponse']
+           'ProbeAlertsDeleteAllResponse', 'SectorStorageTransferResult', 'SectorStorageTransfer', 'SectorStorageTransferResultComponent',
+           'TransferActor']
 
 from dataclasses import dataclass, field
 from mashumaro import DataClassDictMixin
@@ -1100,3 +1101,46 @@ class ProbeAlertsMarkAllReadResponse(DataClassDictMixin):
 class ProbeAlertsDeleteAllResponse(DataClassDictMixin):
     deletedCount: int
     """Number of persistent alerts deleted, whether read or unread."""
+
+
+@dataclass
+class SectorStorageTransferResultComponent(DataClassDictMixin):
+    resources: Dict[Any, float] | None = None
+    itemIds: List[str] | None = None
+
+
+@dataclass
+class SectorStorageTransferResult(DataClassDictMixin):
+    outcome: str
+    delivered: SectorStorageTransferResultComponent
+    lost: SectorStorageTransferResultComponent
+    released: SectorStorageTransferResultComponent
+    deliveredTankPoints: float | None = None
+    """Present for raw deuterium transfers into a probe tank; actual tank points credited."""
+
+
+@dataclass
+class TransferActor(DataClassDictMixin):
+    kind: str | None = None
+    id: str | None = None
+
+
+@dataclass
+class SectorStorageTransfer(DataClassDictMixin):
+    id: str
+    actor: TransferActor
+    objectId: str
+    containerId: str
+    """Null when the destination is the probe deuterium tank."""
+    direction: Literal['to_storage', 'from_storage'] | str
+    resources: Dict[Any, float]
+    itemIds: List[str]
+    status: Literal['queued', 'succeeded', 'failed', 'canceled'] | str
+    startedAt: datetime
+    endsAt: datetime
+    durationSeconds: int
+    tripCount: int
+    result: SectorStorageTransferResult | None
+    error: Dict[Any, Any] | None
+    tankTransfer: SectorStorageTransferResult | None = None
+    """Present when raw deuterium is transferred directly into the probe tank."""
