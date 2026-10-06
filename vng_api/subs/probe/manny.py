@@ -156,6 +156,37 @@ class MannyTaskManager(APISub):
         }, ('missileItemId',))
         await self._add_task(mid, 'ignite_missile', payload)
 
+    async def transfer_deuterium_from_external_storage(self, mid: str, object_id: str, amount: float):
+        """Transfer raw deuterium from external storage into the probe tank
+
+        Retrieves deuterium stored as raw material in accessible external storage in the current sector,
+        and fills the selected probe's deuterium tank directly. Requires an idle embarked Manny and a stationary probe.
+        amount is expressed in ECE: 0.01 ECE adds 1 tank point (100 points per ECE), regardless of tank model or compression.
+        The task always takes 600 seconds: five minutes outbound and five minutes returning, in a single trip
+        regardless of the quantity. The tank is credited only at completion.
+        Requests exceeding the remaining unreserved tank capacity are accepted with 202 and reduced to that capacity,
+        rounded down to 0.0001 ECE. transfer.tankTransfer reports requestedAmountEce, acceptedAmountEce,
+        tankPoints and clamped. Only the accepted amount must be available at the source.
+        A full or fully reserved tank returns 409 probe_deuterium_full; insufficient source stock returns 422.
+        Raw stock and incoming tank capacity are reserved atomically. No onboard cargo capacity is required.
+        Capacity is checked again on return: any amount that no longer fits is released back to source stock,
+        without loss. The final result includes deliveredTankPoints and delivered, released and lost resources in ECE.
+        Cancellation, probe departure or source relocation releases reservations. If the Manny is destroyed,
+        only deuterium carried on the return leg is lost; the outbound leg carries no deuterium.
+        Idempotency-Key is account-wide and binds method, path and canonical JSON. Matching retries return
+        the original response even after completion. The transfer can be followed with
+        GET /api/probe/{probeId}/storage-transfers/{transferId}.
+
+        :param mid: The ID of the manny to carry out the task
+        :param object_id: The ID of the external storage
+        :param amount: The amount of deuterium to refuel
+        """
+        payload = {
+            'objectId': object_id,
+            'amount': amount,
+        }
+        await self._add_task(mid, 'transfer-deuterium-from-external-storage', payload)
+
 
 class MannySub(APISub):
 
