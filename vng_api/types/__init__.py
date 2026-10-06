@@ -14,7 +14,7 @@ __all__ = ['Vector', 'Sector', 'SectorVisitHistory', 'SectorObservation', 'Secto
            'AlertDataRisk', 'AlertDataProbeDestroyed', 'AlertRules', 'AlertType', 'ProbeDestroyedReason', 'ProbeDamageWarningRule', 'MessageStatus',
            'ProbeDamageWarningResponse', 'Session', 'ProbeInventoryJettisonResponse', 'Jettisoned', 'StorageMoveResponse', 'AsteroidSpeed',
            'ProbeMindSnapshotReassignResponse', 'LogbookPage', 'LogbookPageSummary', 'ProbeLogbookPagesResponse', 'AsteroidTrajectory',
-           'MannyStorageTransferResources', 'SectorStorageResource', 'SectorStorageInventory', 'SectorStorageItem']
+           'MannyStorageTransferResources', 'SectorStorageResource', 'SectorStorageInventory', 'SectorStorageItem', 'ProbeAlertsMarkAllReadResponse']
 
 from dataclasses import dataclass, field
 from mashumaro import DataClassDictMixin
@@ -1087,3 +1087,9 @@ class SectorStorageInventory(DataClassDictMixin):
     nextCursor: str
     objectId: str | None = None
     depotId: str | None = None
+
+
+@dataclass
+class ProbeAlertsMarkAllReadResponse(DataClassDictMixin):
+    markedReadCount: int
+    """Number of alerts changed from unread to read."""
