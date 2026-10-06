@@ -7,7 +7,7 @@ __all__ = ['OthersFleet', 'OthersShip', 'OthersShipMovement', 'OthersFuel', 'Shi
            'OthersInventoryTransferCreateResponse', 'OthersInventoryTransfer', 'OthersInventoryTransferAction', 'OthersTransferResult',
            'OthersInventoryResourceJettisonResult', 'OthersInventoryItemJettisonResult', 'OthersInventoryJettisonResult',
            'OthersInventoryJettisonResponse', 'OthersScan', 'OthersObservedProbe', 'OthersSectorObservation', 'OthersObservedSectorObject',
-           'OthersObjectMovement', 'OthersScanSource']
+           'OthersObjectMovement', 'OthersScanSource', 'OthersOverview']
 
 from dataclasses import dataclass
 from datetime import datetime
@@ -457,3 +457,11 @@ class OthersSectorObservation(DataClassDictMixin):
     possibleObjects: List[str] | None = None
     navigationalRisk: str | None = None
     message: str | None = None
+
+
+@dataclass
+class OthersOverview(DataClassDictMixin):
+    fleetCount: int
+    shipCount: int
+    auxiliaryCount: int
+    activeActionCount: int

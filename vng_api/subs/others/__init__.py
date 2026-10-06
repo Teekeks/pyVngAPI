@@ -1,9 +1,10 @@
-from vng_api.base import APISub
+from vng_api.base import APISub, APIResponse
 from typing import TYPE_CHECKING
 
 from vng_api.subs.others.fleet import OthersFleetSub
 from vng_api.subs.others.ship import OthersShipSub
 from vng_api.subs.others.sector import OthersSectorSub
+from vng_api.types.others import OthersOverview
 
 if TYPE_CHECKING:
     from vng_api.client import APIClient
@@ -16,3 +17,8 @@ class OthersSub(APISub):
         self.fleet: OthersFleetSub = OthersFleetSub(client)
         self.ship: OthersShipSub = OthersShipSub(client)
         self.sector: OthersSectorSub = OthersSectorSub(client)
+
+    async def overview(self) -> APIResponse[OthersOverview]:
+        """Get the operator Others overview
+        """
+        return await self.client.api_call('get', 'others', None, lambda inp: OthersOverview.from_dict(inp['others']))
