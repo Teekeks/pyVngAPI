@@ -14,7 +14,7 @@ __all__ = ['Vector', 'Sector', 'SectorVisitHistory', 'SectorObservation', 'Secto
            'AlertDataRisk', 'AlertDataProbeDestroyed', 'AlertRules', 'AlertType', 'ProbeDestroyedReason', 'ProbeDamageWarningRule', 'MessageStatus',
            'ProbeDamageWarningResponse', 'Session', 'ProbeInventoryJettisonResponse', 'Jettisoned', 'StorageMoveResponse', 'AsteroidSpeed',
            'ProbeMindSnapshotReassignResponse', 'LogbookPage', 'LogbookPageSummary', 'ProbeLogbookPagesResponse', 'AsteroidTrajectory',
-           'MannyStorageTransferResources']
+           'MannyStorageTransferResources', 'SectorStorageResource', 'SectorStorageInventory', 'SectorStorageItem']
 
 from dataclasses import dataclass, field
 from mashumaro import DataClassDictMixin
@@ -1060,3 +1060,30 @@ class LogbookPage(LogbookPageSummary):
 class ProbeLogbookPagesResponse(DataClassDictMixin):
     pages: List[LogbookPageSummary]
     pagination: Pagination
+
+
+@dataclass
+class SectorStorageItem(DataClassDictMixin):
+    id: str
+    type: ItemKind
+    name: str
+    containerSpace: float
+    available: bool
+    metadata: Dict[Any, Any]
+
+
+@dataclass
+class SectorStorageResource(DataClassDictMixin):
+    type: ResourceType
+    amount: float
+    reservedAmount: float
+    availableAmount: float
+
+
+@dataclass
+class SectorStorageInventory(DataClassDictMixin):
+    resources: List[SectorStorageResource]
+    items: List[SectorStorageItem]
+    nextCursor: str
+    objectId: str | None = None
+    depotId: str | None = None

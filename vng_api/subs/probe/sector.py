@@ -2,7 +2,7 @@ from typing import List
 
 from vng_api.base import APISub, APIResponse
 from vng_api.helper.internal import build_url
-from vng_api.types import ProbeSectorResponse, SectorVisitHistory, AutonomousUnitObservationResponse
+from vng_api.types import ProbeSectorResponse, SectorVisitHistory, AutonomousUnitObservationResponse, SectorStorageInventory
 
 
 class ProbeSectorSub(APISub):
@@ -46,3 +46,22 @@ class ProbeSectorSub(APISub):
         url = build_url(f'probe/{pid}/sector/autonomous-units', {'limit': limit, 'cursor': cursor})
         return await self.client.api_call('get', url, None,
                                           lambda inp: AutonomousUnitObservationResponse.from_dict(inp))
+
+    async def get_object_inventory(self,
+                                   pid: int,
+                                   object_id: str,
+                                   limit: int = None,
+                                   cursor: str = None) -> APIResponse[SectorStorageInventory]:
+        """Read accessible sector storage contents
+
+        Available for drifting containers, personally known containers hidden on asteroids, and other storage
+        objects whose access this probe has discovered. Items are individually selectable; the container shell is
+        excluded. Access is revalidated on every page. No absolute coordinates are returned.
+
+        :param pid: Probe ID
+        :param object_id: ID of object with storage in sector
+        :param limit: Maximum number of items to return. Default: 100, Max: 500, Min: 1
+        :param cursor: Cursor for pagination
+        """
+        url = build_url(f'probe/{pid}/sector-objects/{object_id}/inventory', {'limit': limit, 'cursor': cursor})
+        return await self.client.api_call('get', url, None, lambda inp: SectorStorageInventory.from_dict(inp))
