@@ -13,7 +13,8 @@ __all__ = ['Vector', 'Sector', 'SectorVisitHistory', 'SectorObservation', 'Secto
            'Alert', 'AlertDataBlueprint', 'AlertDataInstanceSwitch', 'AlertDataContainer', 'AlertDataObject', 'AlertDataReport', 'AlertDataPlanet',
            'AlertDataRisk', 'AlertDataProbeDestroyed', 'AlertRules', 'AlertType', 'ProbeDestroyedReason', 'ProbeDamageWarningRule', 'MessageStatus',
            'ProbeDamageWarningResponse', 'Session', 'ProbeInventoryJettisonResponse', 'Jettisoned', 'StorageMoveResponse', 'AsteroidSpeed',
-           'ProbeMindSnapshotReassignResponse', 'LogbookPage', 'LogbookPageSummary', 'ProbeLogbookPagesResponse', 'AsteroidTrajectory']
+           'ProbeMindSnapshotReassignResponse', 'LogbookPage', 'LogbookPageSummary', 'ProbeLogbookPagesResponse', 'AsteroidTrajectory',
+           'MannyStorageTransferResources']
 
 from dataclasses import dataclass, field
 from mashumaro import DataClassDictMixin
@@ -89,6 +90,13 @@ class SectorVisitHistory(DataClassDictMixin):
 @dataclass
 class ResourceAmounts(DataClassDictMixin):
     deuterium: float
+    metals: float
+    ice: float
+    carbon_compounds: float
+
+
+@dataclass
+class MannyStorageTransferResources(DataClassDictMixin):
     metals: float
     ice: float
     carbon_compounds: float

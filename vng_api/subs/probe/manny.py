@@ -2,7 +2,7 @@ from vng_api.helper.internal import optional, remove_none
 from vng_api.base import APISub, APIBatchResult, APIResponse
 from typing import TYPE_CHECKING, List, Dict, Any, Iterable, Literal
 
-from vng_api.types import Manny, Printable, PrintResponse, ResourceType
+from vng_api.types import Manny, Printable, PrintResponse, ResourceType, MannyStorageTransferResources
 
 if TYPE_CHECKING:
     from vng_api.client import APIClient
@@ -186,6 +186,48 @@ class MannyTaskManager(APISub):
             'amount': amount,
         }
         await self._add_task(mid, 'transfer-deuterium-from-external-storage', payload)
+
+    async def storage_transfers(self,
+                                mid: str,
+                                object_id: str,
+                                direction: Literal['to_storage', 'from_storage'],
+                                container_id: str,
+                                kind: Literal['resources', 'items'],
+                                resources: MannyStorageTransferResources = None,
+                                item_ids: List[str] = None):
+        """Transfer contents between an onboard container and sector storage
+
+        Requires an idle embarked Manny and a stationary probe. containerId fixes the onboard source or
+        destination. Resources use the configured Manny cargo and round-trip duration; items use whole-object salvage
+        transport. Source contents and destination capacity are reserved until terminal settlement. Only metals, ice and carbon_compounds are
+        accepted as resources, in ECE.
+        Any resources object containing deuterium is rejected with 400 bad_request in either direction, including
+        mixed-resource requests and zero quantities, before any stock or capacity reservation. Idempotency keys are account-wide and bind method, path
+        and canonical JSON. Replaying a matching key returns the original response even after completion.
+
+        :param mid: The ID of the manny to carry out the task
+        :param object_id: The ID of the external storage
+        :param direction: The transfer direction
+        :param container_id: The targeted container
+        :param kind: What kind to transfer
+        :param resources: Which resources to transfer, required for kind `resources`
+        :param item_ids: Which items to transfer, required for kind `items`
+        :raises ValueError: If `kind` is `items` and `item_ids` is None
+        :raises ValueError: If `kind` is `resources` and `resources` is None
+        """
+        if kind == 'items' and item_ids is None:
+            raise ValueError('`item_ids` needs to be set for kind "items"')
+        if kind == 'resources' and resources is None:
+            raise ValueError('`resources` needs to be set for kind "resources"')
+        payload = optional({
+            'objectId': object_id,
+            'direction': direction,
+            'containerId': container_id,
+            'kind': kind,
+            'itemIds': item_ids,
+            'resources': resources,
+        }, ['itemIds', 'resources'])
+        await self._add_task(mid, 'storage-transfers', payload)
 
 
 class MannySub(APISub):
