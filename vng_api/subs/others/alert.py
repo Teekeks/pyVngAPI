@@ -24,3 +24,20 @@ class OthersAlertSub(APISub):
         if ret.success:
             await self.client.issue_cache_update(ret.data)
         return ret
+
+    async def read_batch(self, alert_ids: List[str]) -> APIResponse[List[OthersAlert]]:
+        """Mark a batch of owned Others alerts as read
+
+        Marks only the supplied alerts as read, atomically. All alerts must belong to the authenticated account; an unknown or foreign identifier
+        rejects the entire batch with 404 others_alert_not_found. Already-read alerts are accepted without changing their timestamps, so retries are
+        safe. Returns the alerts in request order. Requires Others control permission and counts as one request against the normal per-token
+        rate limit.
+
+        :param alert_ids: Alert IDs
+        """
+        ret = await self.client.api_call('post', 'others/alerts/mark-read', {'alertIds': alert_ids},
+                                         lambda inp: [OthersAlert.from_dict(x) for x in inp['alerts']])
+        if ret.success:
+            for alert in ret.data:
+                await self.client.issue_cache_update(alert)
+        return ret
