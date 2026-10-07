@@ -66,7 +66,7 @@ class Player(DataClassDictMixin):
     displayName: str | None = None
 
 
-@dataclass
+@dataclass(eq=True, unsafe_hash=True)
 class Vector(DataClassDictMixin):
     x: int
     y: int
