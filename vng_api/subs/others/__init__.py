@@ -1,10 +1,11 @@
 from vng_api.base import APISub, APIResponse
 from typing import TYPE_CHECKING
 
+from vng_api.helper.internal import build_url
 from vng_api.subs.others.fleet import OthersFleetSub
 from vng_api.subs.others.ship import OthersShipSub
 from vng_api.subs.others.sector import OthersSectorSub
-from vng_api.types import MissileState
+from vng_api.types import MissileState, SectorStorageInventory
 from vng_api.types.others import OthersOverview
 
 if TYPE_CHECKING:
@@ -32,3 +33,13 @@ class OthersSub(APISub):
         :param missile_id: Missile ID
         """
         return await self.client.api_call('get', f'others/missiles/{missile_id}', None, lambda inp: MissileState.from_dict(inp['missile']))
+
+    async def get_depot(self, depot_id: str, limit: int = None, cursor: str = None) -> APIResponse[SectorStorageInventory]:
+        """Read shared depot contents
+
+        :param depot_id: Depot ID
+        :param limit: Page limit. Default: 100, Max: 500, Min 1
+        :param cursor: Pagination Cursor
+        """
+        url = build_url(f'others/germination-depots/{depot_id}/inventory', {'limit': limit, 'cursor': cursor})
+        return await self.client.api_call('get', url, None, lambda inp: SectorStorageInventory.from_dict(inp))
