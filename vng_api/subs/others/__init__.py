@@ -7,6 +7,7 @@ from vng_api.subs.others.ship import OthersShipSub
 from vng_api.subs.others.sector import OthersSectorSub
 from vng_api.types import MissileState, SectorStorageInventory
 from vng_api.types.others import OthersOverview
+from vng_api.subs.others.alert import OthersAlertSub
 
 if TYPE_CHECKING:
     from vng_api.client import APIClient
@@ -19,6 +20,7 @@ class OthersSub(APISub):
         self.fleet: OthersFleetSub = OthersFleetSub(client)
         self.ship: OthersShipSub = OthersShipSub(client)
         self.sector: OthersSectorSub = OthersSectorSub(client)
+        self.alert: OthersAlertSub = OthersAlertSub(client)
 
     async def overview(self) -> APIResponse[OthersOverview]:
         """Get the operator Others overview

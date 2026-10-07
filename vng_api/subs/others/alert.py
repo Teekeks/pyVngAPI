@@ -1,0 +1,16 @@
+from typing import Literal, List
+
+from vng_api.base import APISub, APIResponse
+from vng_api.helper.internal import build_url
+from vng_api.types.others import OthersAlert
+
+
+class OthersAlertSub(APISub):
+
+    async def get_all(self, status: Literal['unread'] | str | None = None) -> APIResponse[List[OthersAlert]]:
+        """List persistent alerts for owned Others ships
+
+        :param status: Message Status to filter for
+        """
+        url = build_url('others/alerts', {'status': status})
+        return await self.client.api_call('get', url, None, lambda inp: [OthersAlert.from_dict(x) for x in inp['alerts']])

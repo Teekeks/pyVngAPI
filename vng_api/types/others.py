@@ -7,7 +7,7 @@ __all__ = ['OthersFleet', 'OthersShip', 'OthersShipMovement', 'OthersFuel', 'Shi
            'OthersInventoryTransferCreateResponse', 'OthersInventoryTransfer', 'OthersInventoryTransferAction', 'OthersTransferResult',
            'OthersInventoryResourceJettisonResult', 'OthersInventoryItemJettisonResult', 'OthersInventoryJettisonResult',
            'OthersInventoryJettisonResponse', 'OthersScan', 'OthersObservedProbe', 'OthersSectorObservation', 'OthersObservedSectorObject',
-           'OthersObjectMovement', 'OthersScanSource', 'OthersOverview']
+           'OthersObjectMovement', 'OthersScanSource', 'OthersOverview', 'OthersAlert']
 
 from dataclasses import dataclass
 from datetime import datetime
@@ -17,7 +17,7 @@ from mashumaro import DataClassDictMixin
 from mashumaro.config import BaseConfig
 from mashumaro.types import Discriminator
 
-from vng_api.types import Sector, Vector, MissileState, ResourceAmounts, ResourceType, AutonomousUnitCarrier
+from vng_api.types import Sector, Vector, MissileState, ResourceAmounts, ResourceType, AutonomousUnitCarrier, MessageStatus
 
 type OthersShipType = Literal['mothership', 'standard'] | str
 
@@ -465,3 +465,17 @@ class OthersOverview(DataClassDictMixin):
     shipCount: int
     auxiliaryCount: int
     activeActionCount: int
+
+
+@dataclass
+class OthersAlert(DataClassDictMixin):
+    id: str
+    shipId: str
+    """Opaque public identifier of the firing or victim Others ship concerned by this missile or motorized-asteroid alert."""
+    type: Literal['missile_resolution', 'missile_damage', 'asteroid_impact_damage'] | str
+    status: MessageStatus
+    phase: Literal['weapon_result', 'weapon_damage'] | str
+    message: str
+    createdAt: datetime
+    updatedAt: datetime
+    readAt: datetime
