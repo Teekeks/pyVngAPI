@@ -6,7 +6,7 @@ from vng_api.subs.others.fleet import OthersFleetSub
 from vng_api.subs.others.ship import OthersShipSub
 from vng_api.subs.others.sector import OthersSectorSub
 from vng_api.types import MissileState, SectorStorageInventory
-from vng_api.types.others import OthersOverview
+from vng_api.types.others import OthersOverview, OthersInventoryTransfer
 from vng_api.subs.others.alert import OthersAlertSub
 
 if TYPE_CHECKING:
@@ -45,3 +45,11 @@ class OthersSub(APISub):
         """
         url = build_url(f'others/germination-depots/{depot_id}/inventory', {'limit': limit, 'cursor': cursor})
         return await self.client.api_call('get', url, None, lambda inp: SectorStorageInventory.from_dict(inp))
+
+    async def get_transfer(self, transfer_id: str) -> APIResponse[OthersInventoryTransfer]:
+        """Get a transfer
+
+        :param transfer_id: Transfer ID
+        """
+        return await self.client.api_call('get', f'others/inventory-transfers/{transfer_id}', None,
+                                          lambda inp: OthersInventoryTransfer.from_dict(inp['transfer']))
