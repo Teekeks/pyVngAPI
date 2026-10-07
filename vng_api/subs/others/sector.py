@@ -1,6 +1,6 @@
 from vng_api.base import APISub, APIResponse
 from vng_api.helper.internal import build_url
-from vng_api.types import Vector
+from vng_api.types import Vector, AutonomousUnitObservationResponse
 from vng_api.types.others import OthersSectorObservation, OthersVisitedSectorsResponse
 
 
@@ -42,3 +42,16 @@ class OthersSectorSub(APISub):
         """
         url = build_url(f'others/fleets/{fid}/visited-sectors', {'limit': limit, 'cursor': cursor})
         return await self.client.api_call('get', url, None, lambda inp: OthersVisitedSectorsResponse.from_dict(inp))
+
+    async def autonomous_units(self,
+                               sid: str,
+                               limit: int = None,
+                               cursor: str = None) -> APIResponse[AutonomousUnitObservationResponse]:
+        """Observe locally deployed autonomous units
+
+        :param sid: Ship ID
+        :param limit: Entry limit per page, Default: 100, Max: 500, Min: 1
+        :param cursor: Pagination cursor
+        """
+        url = build_url(f'/api/others/ships/{sid}/sector/autonomous-units',{'limit': limit, 'cursor': cursor})
+        return await self.client.api_call('get', url, None, lambda inp: AutonomousUnitObservationResponse.from_dict(inp))
