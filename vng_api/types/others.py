@@ -7,7 +7,8 @@ __all__ = ['OthersFleet', 'OthersShip', 'OthersShipMovement', 'OthersFuel', 'Shi
            'OthersInventoryTransferCreateResponse', 'OthersInventoryTransfer', 'OthersInventoryTransferAction', 'OthersTransferResult',
            'OthersInventoryResourceJettisonResult', 'OthersInventoryItemJettisonResult', 'OthersInventoryJettisonResult',
            'OthersInventoryJettisonResponse', 'OthersScan', 'OthersObservedProbe', 'OthersSectorObservation', 'OthersObservedSectorObject',
-           'OthersObjectMovement', 'OthersScanSource', 'OthersOverview', 'OthersAlert', 'OthersVisitedSector', 'OthersVisitedSectorsResponse']
+           'OthersObjectMovement', 'OthersScanSource', 'OthersOverview', 'OthersAlert', 'OthersVisitedSector', 'OthersVisitedSectorsResponse',
+           'OthersCraftingRecipe', 'OthersCraftingOutput', 'OthersCraftingIngredients']
 
 from dataclasses import dataclass
 from datetime import datetime
@@ -17,7 +18,7 @@ from mashumaro import DataClassDictMixin
 from mashumaro.config import BaseConfig
 from mashumaro.types import Discriminator
 
-from vng_api.types import Sector, Vector, MissileState, ResourceAmounts, ResourceType, AutonomousUnitCarrier, MessageStatus
+from vng_api.types import Sector, Vector, MissileState, ResourceAmounts, ResourceType, MessageStatus
 
 type OthersShipType = Literal['mothership', 'standard'] | str
 
@@ -493,3 +494,25 @@ class OthersVisitedSector(DataClassDictMixin):
 class OthersVisitedSectorsResponse(DataClassDictMixin):
     visitedSectors: List[OthersVisitedSector]
     nextCursor: str | None = None
+
+
+@dataclass
+class OthersCraftingOutput(DataClassDictMixin):
+    kind: str
+    quantity: int
+
+
+@dataclass
+class OthersCraftingIngredients(DataClassDictMixin):
+    metals: float
+    ice: float
+    carbon_compounds: float
+    deuterium: float
+
+
+@dataclass
+class OthersCraftingRecipe(DataClassDictMixin):
+    id: str
+    ingredients: OthersCraftingIngredients
+    durationSeconds: int
+    output: OthersCraftingOutput

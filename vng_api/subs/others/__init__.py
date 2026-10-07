@@ -1,12 +1,12 @@
 from vng_api.base import APISub, APIResponse
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, List
 
 from vng_api.helper.internal import build_url
 from vng_api.subs.others.fleet import OthersFleetSub
 from vng_api.subs.others.ship import OthersShipSub
 from vng_api.subs.others.sector import OthersSectorSub
-from vng_api.types import MissileState, SectorStorageInventory
-from vng_api.types.others import OthersOverview, OthersInventoryTransfer, OthersCraft
+from vng_api.types import MissileState, SectorStorageInventory, CraftingRecipe
+from vng_api.types.others import OthersOverview, OthersInventoryTransfer, OthersCraft, OthersCraftingRecipe
 from vng_api.subs.others.alert import OthersAlertSub
 
 if TYPE_CHECKING:
@@ -61,3 +61,8 @@ class OthersSub(APISub):
         """
         return await self.client.api_call('get', f'others/crafts/{craft_id}', None,
                                           lambda inp: OthersCraft.from_dict(inp['craft']))
+
+    async def crafting_recipes(self) -> APIResponse[List[OthersCraftingRecipe]]:
+        """List available crafting recipes"""
+        return await self.client.api_call('get', 'others/crafting/recipes', None,
+                                          lambda inp: [OthersCraftingRecipe.from_dict(d) for d in inp['recipes']])
