@@ -6,7 +6,7 @@ from vng_api.subs.others.fleet import OthersFleetSub
 from vng_api.subs.others.ship import OthersShipSub
 from vng_api.subs.others.sector import OthersSectorSub
 from vng_api.types import MissileState, SectorStorageInventory
-from vng_api.types.others import OthersOverview, OthersInventoryTransfer
+from vng_api.types.others import OthersOverview, OthersInventoryTransfer, OthersCraft
 from vng_api.subs.others.alert import OthersAlertSub
 
 if TYPE_CHECKING:
@@ -53,3 +53,11 @@ class OthersSub(APISub):
         """
         return await self.client.api_call('get', f'others/inventory-transfers/{transfer_id}', None,
                                           lambda inp: OthersInventoryTransfer.from_dict(inp['transfer']))
+
+    async def get_craft(self, craft_id: str) -> APIResponse[OthersCraft]:
+        """Get one craft
+
+        :param craft_id: Craft ID
+        """
+        return await self.client.api_call('get', f'others/crafts/{craft_id}', None,
+                                          lambda inp: OthersCraft.from_dict(inp['craft']))
