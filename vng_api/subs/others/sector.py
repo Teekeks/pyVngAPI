@@ -1,7 +1,7 @@
 from vng_api.base import APISub, APIResponse
 from vng_api.helper.internal import build_url
 from vng_api.types import Vector
-from vng_api.types.others import OthersSectorObservation
+from vng_api.types.others import OthersSectorObservation, OthersVisitedSectorsResponse
 
 
 class OthersSectorSub(APISub):
@@ -29,3 +29,16 @@ class OthersSectorSub(APISub):
             raise ValueError('missing coordinates')
         url = build_url('others/sector', {'shipId': sid, 'x': x, 'y': y, 'z': z})
         return await self.client.api_call('get', url, None, lambda inp: OthersSectorObservation.from_dict(inp['sector']))
+
+    async def get_visited(self, fid: str, limit: int = None, cursor: str = None) -> APIResponse[OthersVisitedSectorsResponse]:
+        """List sectors visited by one owned fleet
+
+        Returns the fleet's private navigation history in coordinates relative to the owning player's home. This history is independent from probe
+        visited-sector history and is used to provide precise BOB scans.
+
+        :param fid: Fleet ID
+        :param limit: Entry limit per page, Default: 100, Max: 500, Min: 1
+        :param cursor: Pagination cursor
+        """
+        url = build_url(f'others/fleets/{fid}/visited-sectors', {'limit': limit, 'cursor': cursor})
+        return await self.client.api_call('get', url, None, lambda inp: OthersVisitedSectorsResponse.from_dict(inp))

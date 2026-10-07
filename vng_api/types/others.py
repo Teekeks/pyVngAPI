@@ -7,7 +7,7 @@ __all__ = ['OthersFleet', 'OthersShip', 'OthersShipMovement', 'OthersFuel', 'Shi
            'OthersInventoryTransferCreateResponse', 'OthersInventoryTransfer', 'OthersInventoryTransferAction', 'OthersTransferResult',
            'OthersInventoryResourceJettisonResult', 'OthersInventoryItemJettisonResult', 'OthersInventoryJettisonResult',
            'OthersInventoryJettisonResponse', 'OthersScan', 'OthersObservedProbe', 'OthersSectorObservation', 'OthersObservedSectorObject',
-           'OthersObjectMovement', 'OthersScanSource', 'OthersOverview', 'OthersAlert']
+           'OthersObjectMovement', 'OthersScanSource', 'OthersOverview', 'OthersAlert', 'OthersVisitedSector', 'OthersVisitedSectorsResponse']
 
 from dataclasses import dataclass
 from datetime import datetime
@@ -479,3 +479,17 @@ class OthersAlert(DataClassDictMixin):
     createdAt: datetime
     updatedAt: datetime
     readAt: datetime
+
+
+@dataclass
+class OthersVisitedSector(DataClassDictMixin):
+    relativeCoordinates: Vector
+    firstVisitedAt: datetime
+    lastVisitedAt: datetime
+    visitCount: int
+
+
+@dataclass
+class OthersVisitedSectorsResponse(DataClassDictMixin):
+    visitedSectors: List[OthersVisitedSector]
+    nextCursor: str | None = None
