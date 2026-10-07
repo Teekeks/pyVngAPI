@@ -7,3 +7,4 @@ items_type_from_crafting.py
 .venv/
 **/__pycache__/
 /scripts
+/dist
