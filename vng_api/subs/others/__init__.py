@@ -6,7 +6,7 @@ from vng_api.subs.others.fleet import OthersFleetSub
 from vng_api.subs.others.ship import OthersShipSub
 from vng_api.subs.others.sector import OthersSectorSub
 from vng_api.types import MissileState, SectorStorageInventory, CraftingRecipe
-from vng_api.types.others import OthersOverview, OthersInventoryTransfer, OthersCraft, OthersCraftingRecipe
+from vng_api.types.others import OthersOverview, OthersInventoryTransfer, OthersCraft, OthersCraftingRecipe, OthersBaseAction
 from vng_api.subs.others.alert import OthersAlertSub
 
 if TYPE_CHECKING:
@@ -66,3 +66,16 @@ class OthersSub(APISub):
         """List available crafting recipes"""
         return await self.client.api_call('get', 'others/crafting/recipes', None,
                                           lambda inp: [OthersCraftingRecipe.from_dict(d) for d in inp['recipes']])
+
+    async def get_action(self, action_id: str) -> APIResponse[OthersBaseAction]:
+        """Get one scheduler-driven action
+
+        Returns the current persisted action, including terminal failures with HTTP 200. For type deuterium_transfer, action follows
+        OthersDeuteriumTransferAction: endsAt is the scheduled completion, result.amount is present on success, and error describes a failure
+        when available. Depot construction follows OthersDepotConstructionAction; depot_deposit and depot_withdrawal follow OthersDepotTransferAction,
+        including the reserved transfer manifest and terminal delivered/lost/released content. result and completedAt are omitted until settlement;
+        error is optional. Read this endpoint to track progress; replaying an idempotent POST returns the originally stored response.
+
+        :param action_id: ID of the queries action
+        """
+        return await self.client.api_call('get', f'others/actions/{action_id}', None, lambda inp: OthersBaseAction.from_dict(inp['action']))

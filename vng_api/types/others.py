@@ -243,25 +243,6 @@ class OthersError(DataClassDictMixin):
 
 
 @dataclass
-class OthersDepotActionBase(DataClassDictMixin):
-    id: str
-    """Opaque action id retained after the auxiliary disappears."""
-    type: Literal['build_germination_depot', 'depot_deposit', 'depot_withdrawal'] | str
-    status: Literal['queued', 'succeeded', 'failed', 'canceled'] | str
-    """queued until terminal settlement; succeeded on completion, canceled on carrier departure/destruction, failed on auxiliary destruction. 
-    Completion already due at interruption takes precedence."""
-    actor: ActionActor
-    createdAt: datetime
-    updatedAt: datetime
-    endsAt: datetime
-    """Scheduled deadline; retained even when interrupted earlier."""
-    completedAt: datetime | None = None
-    """Present after terminal settlement; omitted while queued."""
-    error: OthersError | None = None
-    """Present only when an error was recorded. An interruption can have a result without error."""
-
-
-@dataclass
 class OthersDepotTransfer(DataClassDictMixin):
     depotId: str
     resources: ResourceAmounts
@@ -293,6 +274,28 @@ class OthersDepotTransferResult(DataClassDictMixin):
     dormantAuxiliaryId: str | None = None
     """Present on carrier_departure or carrier_destroyed; public sector-object id of the intact dormant auxiliary. 
     Absent on success or auxiliary destruction."""
+
+
+@dataclass
+class OthersBaseAction(DataClassDictMixin):
+    id: str
+    status: Literal['queued', 'succeeded', 'failed', 'canceled'] | str
+    actor: ActionActor
+    createdAt: datetime
+    updatedAt: datetime
+    endsAt: datetime
+
+    class Config(BaseConfig):
+        discriminator = Discriminator(field='type', include_subtypes=True)
+
+
+@dataclass
+class OthersDepotActionBase(OthersBaseAction, DataClassDictMixin):
+    type: Literal['build_germination_depot', 'depot_deposit', 'depot_withdrawal']
+    completedAt: datetime | None = None
+    """Present after terminal settlement; omitted while queued."""
+    error: OthersError | None = None
+    """Present only when an error was recorded. An interruption can have a result without error."""
 
 
 @dataclass
@@ -364,19 +367,6 @@ class OthersRepairActionResult(DataClassDictMixin):
     """Actual restored points, capped at missing integrity at completion."""
     integrity: int
     """Ship integrity after completion."""
-
-
-@dataclass
-class OthersBaseAction(DataClassDictMixin):
-    id: str
-    status: Literal['queued', 'succeeded', 'failed', 'canceled'] | str
-    actor: ActionActor
-    createdAt: datetime
-    updatedAt: datetime
-    endsAt: datetime
-
-    class Config(BaseConfig):
-        discriminator = Discriminator(field='type', include_subtypes=True)
 
 
 @dataclass
