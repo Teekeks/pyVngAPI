@@ -3,7 +3,7 @@ from typing import List
 from vng_api.base import APISub, APIResponse
 from vng_api.helper.internal import build_url
 from vng_api.types import ResourceAmounts
-from vng_api.types.others import OthersAuxiliariesResponse, OthersAuxiliary, OthersDepotTransferAction, OthersDepotActionBase
+from vng_api.types.others import OthersAuxiliariesResponse, OthersAuxiliary, OthersDepotTransferAction, OthersDepotActionBase, OthersRepairAction
 
 
 class AuxiliarySub(APISub):
@@ -85,3 +85,29 @@ class AuxiliarySub(APISub):
         """
         return await self.client.api_call('post', f'others/ships/{sid}/auxiliaries/{auxiliary_id}/build-germination-depot', None,
                                           lambda x: OthersDepotActionBase.from_dict(x['action']))
+
+    async def repair(self, sid: str, auxiliary_id: str, percent: int) -> APIResponse[OthersRepairAction]:
+        """Repair a ship with an embarked auxiliary
+
+        Requires an owned active ship and a free embarked auxiliary belonging to it.
+        integrityPercent counts whole integrity points, including on standard ships
+        whose maximum is 20 (mothership maximum is 100). The requested amount is
+        capped at missing integrity. Duration and metals use the same configuration
+        as Manny repair: manny.actions.repairSecondsPerIntegrityPercent (default
+        600 seconds per point) and manny.actions.repairMetalsPerIntegrityPercent
+        (default 0.01 ECE per point). Available ship inventory metals are consumed
+        immediately; reserved metals cannot be spent. The auxiliary remains busy
+        until scheduled completion, which restores integrity up to max_integrity
+        and releases the auxiliary. Other repairs may run concurrently; completion
+        reports the points actually restored, without refunding an overlapping repair.
+        An embarked repair continues during carrier movement. Ship destruction
+        fails the action with carrier_destroyed without restoring integrity. Poll
+        GET /api/others/actions/{actionId} for completion. The task is also available
+        as repair through the atomic auxiliary task batch endpoint.
+
+        :param sid: Ship ID
+        :param auxiliary_id: Executing auxiliary ID
+        :param percent: nr of percent to repair
+        """
+        return await self.client.api_call('post', f'others/ships/{sid}/auxiliaries/{auxiliary_id}/repair', {'integrityPercent': percent},
+                                          lambda inp: OthersRepairAction.from_dict(inp['action']))

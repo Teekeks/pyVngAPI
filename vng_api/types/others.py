@@ -8,7 +8,8 @@ __all__ = ['OthersFleet', 'OthersShip', 'OthersShipMovement', 'OthersFuel', 'Shi
            'OthersInventoryResourceJettisonResult', 'OthersInventoryItemJettisonResult', 'OthersInventoryJettisonResult',
            'OthersInventoryJettisonResponse', 'OthersScan', 'OthersObservedProbe', 'OthersSectorObservation', 'OthersObservedSectorObject',
            'OthersObjectMovement', 'OthersScanSource', 'OthersOverview', 'OthersAlert', 'OthersVisitedSector', 'OthersVisitedSectorsResponse',
-           'OthersCraftingRecipe', 'OthersCraftingOutput', 'OthersCraftingIngredients']
+           'OthersCraftingRecipe', 'OthersCraftingOutput', 'OthersCraftingIngredients', 'OthersRepairAction', 'OthersRepairActionDetail',
+           'OthersRepairActionResult']
 
 from dataclasses import dataclass
 from datetime import datetime
@@ -516,3 +517,33 @@ class OthersCraftingRecipe(DataClassDictMixin):
     ingredients: OthersCraftingIngredients
     durationSeconds: int
     output: OthersCraftingOutput
+
+
+@dataclass
+class OthersRepairActionDetail(DataClassDictMixin):
+    integrityPercent: int
+    metalsCost: float
+
+
+@dataclass
+class OthersRepairActionResult(DataClassDictMixin):
+    outcome: Literal['repaired'] | str
+    integrityPercent: int
+    """Actual restored points, capped at missing integrity at completion."""
+    integrity: int
+    """Ship integrity after completion."""
+
+
+@dataclass
+class OthersRepairAction(DataClassDictMixin):
+    id: str
+    type: Literal['auxiliary_repair']
+    status: Literal['queued', 'succeeded', 'failed', 'canceled'] | str
+    actor: ActionActor
+    repair: OthersRepairActionDetail
+    createdAt: datetime
+    updatedAt: datetime
+    endsAt: datetime
+    completedAt: datetime | None = None
+    result: OthersRepairActionResult | None = None
+    error: OthersError | None = None
