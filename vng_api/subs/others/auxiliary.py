@@ -3,7 +3,8 @@ from typing import List
 from vng_api.base import APISub, APIResponse
 from vng_api.helper.internal import build_url
 from vng_api.types import ResourceAmounts
-from vng_api.types.others import OthersAuxiliariesResponse, OthersAuxiliary, OthersDepotTransferAction, OthersDepotActionBase, OthersRepairAction
+from vng_api.types.others import OthersAuxiliariesResponse, OthersAuxiliary, OthersDepotTransferAction, OthersDepotActionBase, OthersRepairAction, \
+    OthersDeuteriumTransferAction
 
 
 class AuxiliarySub(APISub):
@@ -111,3 +112,18 @@ class AuxiliarySub(APISub):
         """
         return await self.client.api_call('post', f'others/ships/{sid}/auxiliaries/{auxiliary_id}/repair', {'integrityPercent': percent},
                                           lambda inp: OthersRepairAction.from_dict(inp['action']))
+
+    async def transfer_deuterium(self, sid: str, auxiliary_id: str, target_ship_id: str, amount: float) -> APIResponse[OthersDeuteriumTransferAction]:
+        """Schedule a tank-to-tank deuterium transfer
+
+        :param sid: Ship ID
+        :param auxiliary_id: Executing auxiliary ID
+        :param target_ship_id: Target ship ID
+        :param amount: amount to transfer
+        """
+        param = {
+            'targetShipId': target_ship_id,
+            'amount': amount,
+        }
+        return await self.client.api_call('post', f'others/ships/{sid}/auxiliaries/{auxiliary_id}/transfer-deuterium', param,
+                                          lambda inp: OthersDeuteriumTransferAction.from_dict(inp['action']))

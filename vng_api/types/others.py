@@ -9,7 +9,7 @@ __all__ = ['OthersFleet', 'OthersShip', 'OthersShipMovement', 'OthersFuel', 'Shi
            'OthersInventoryJettisonResponse', 'OthersScan', 'OthersObservedProbe', 'OthersSectorObservation', 'OthersObservedSectorObject',
            'OthersObjectMovement', 'OthersScanSource', 'OthersOverview', 'OthersAlert', 'OthersVisitedSector', 'OthersVisitedSectorsResponse',
            'OthersCraftingRecipe', 'OthersCraftingOutput', 'OthersCraftingIngredients', 'OthersRepairAction', 'OthersRepairActionDetail',
-           'OthersRepairActionResult']
+           'OthersRepairActionResult', 'OthersBaseAction', 'OthersDeuteriumTransferAction', 'OthersDeuteriumTransferActionResult']
 
 from dataclasses import dataclass
 from datetime import datetime
@@ -352,14 +352,64 @@ class OthersInventoryTransfer(DataClassDictMixin):
 
 
 @dataclass
-class OthersInventoryTransferAction(DataClassDictMixin):
+class OthersRepairActionDetail(DataClassDictMixin):
+    integrityPercent: int
+    metalsCost: float
+
+
+@dataclass
+class OthersRepairActionResult(DataClassDictMixin):
+    outcome: Literal['repaired'] | str
+    integrityPercent: int
+    """Actual restored points, capped at missing integrity at completion."""
+    integrity: int
+    """Ship integrity after completion."""
+
+
+@dataclass
+class OthersBaseAction(DataClassDictMixin):
     id: str
-    type: Literal['inventory_transfer'] | str
-    status: Literal['queued', 'succeeded', 'failed'] | str
+    status: Literal['queued', 'succeeded', 'failed', 'canceled'] | str
     actor: ActionActor
     createdAt: datetime
     updatedAt: datetime
     endsAt: datetime
+
+    class Config(BaseConfig):
+        discriminator = Discriminator(field='type', include_subtypes=True)
+
+
+@dataclass
+class OthersRepairAction(OthersBaseAction, DataClassDictMixin):
+    type: Literal['auxiliary_repair']
+    repair: OthersRepairActionDetail
+    completedAt: datetime | None = None
+    result: OthersRepairActionResult | None = None
+    error: OthersError | None = None
+
+
+@dataclass
+class OthersDeuteriumTransferActionResult(DataClassDictMixin):
+    outcome: Literal['transferred'] | str
+    amount: float
+    """Transferred amount in tank points, rounded to four decimals."""
+
+
+@dataclass
+class OthersDeuteriumTransferAction(OthersBaseAction, DataClassDictMixin):
+    type: Literal['deuterium_transfer']
+    completedAt: datetime | None = None
+    """Present after terminal processing."""
+    result: OthersDeuteriumTransferActionResult | None = None
+    """Present on successful completion."""
+    error: OthersError | None = None
+    """Present when a failure reason was recorded, including target_unavailable if the completion handler finds the target missing, 
+    destroyed or removed. Other lifecycle failures may also terminate the action; do not assume every failed action has error."""
+
+
+@dataclass
+class OthersInventoryTransferAction(OthersBaseAction, DataClassDictMixin):
+    type: Literal['inventory_transfer']
     completedAt: datetime | None = None
     result: Dict[Any, Any] | None = None
     error: Dict[Any, Any] | None = None
@@ -517,33 +567,3 @@ class OthersCraftingRecipe(DataClassDictMixin):
     ingredients: OthersCraftingIngredients
     durationSeconds: int
     output: OthersCraftingOutput
-
-
-@dataclass
-class OthersRepairActionDetail(DataClassDictMixin):
-    integrityPercent: int
-    metalsCost: float
-
-
-@dataclass
-class OthersRepairActionResult(DataClassDictMixin):
-    outcome: Literal['repaired'] | str
-    integrityPercent: int
-    """Actual restored points, capped at missing integrity at completion."""
-    integrity: int
-    """Ship integrity after completion."""
-
-
-@dataclass
-class OthersRepairAction(DataClassDictMixin):
-    id: str
-    type: Literal['auxiliary_repair']
-    status: Literal['queued', 'succeeded', 'failed', 'canceled'] | str
-    actor: ActionActor
-    repair: OthersRepairActionDetail
-    createdAt: datetime
-    updatedAt: datetime
-    endsAt: datetime
-    completedAt: datetime | None = None
-    result: OthersRepairActionResult | None = None
-    error: OthersError | None = None
