@@ -36,7 +36,7 @@ class AuxiliarySub(APISub):
 
         :param sid: Ship ID
         :param auxiliary_id: Executing auxiliary ID
-        :param depot_id: Target deposit
+        :param depot_id: Target depot
         :param resources: Resources to deposit
         :param item_ids: Items to deposit
         """
@@ -46,6 +46,28 @@ class AuxiliarySub(APISub):
             'itemIds': item_ids,
         }
         return await self.client.api_call('post', f'others/ships/{sid}/auxiliaries/{auxiliary_id}/depot-deposits', param,
+                                          lambda x: OthersDepotTransferAction.from_dict(x['action']))
+
+    async def withdraw(self,
+                       sid: str,
+                       auxiliary_id: str,
+                       depot_id: str,
+                       resources: ResourceAmounts,
+                       item_ids: List[str]) -> APIResponse[OthersDepotTransferAction]:
+        """Start depot withdrawal
+
+        :param sid: Ship ID
+        :param auxiliary_id: Executing auxiliary ID
+        :param depot_id: Target depot
+        :param resources: Resources to withdraw
+        :param item_ids: Items to withdraw
+        """
+        param = {
+            'depotId': depot_id,
+            'resources': resources.to_dict(),
+            'itemIds': item_ids,
+        }
+        return await self.client.api_call('post', f'others/ships/{sid}/auxiliaries/{auxiliary_id}/depot-withdrawals', param,
                                           lambda x: OthersDepotTransferAction.from_dict(x['action']))
 
     async def build_germination_depot(self, sid: str, auxiliary_id: str) -> APIResponse[OthersDepotActionBase]:
