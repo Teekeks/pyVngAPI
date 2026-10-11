@@ -1,7 +1,7 @@
 __all__ = ['APIClient']
 
 import asyncio
-from typing import Dict, Literal, Callable, Any, List
+from typing import Dict, Literal, Callable, Any, List, Awaitable
 from datetime import datetime, UTC, timedelta
 import aiohttp
 import orjson
@@ -22,6 +22,8 @@ class APIClient:
     """Set this to add your tools name to the user agent string of all requests"""
     tool_author: str | None = None
     """Set this to add your tools author to the user agent string of all requests, ignored if tool_name is not set as well."""
+    cache_hook: Callable[[Any], Awaitable[None]] | None = None
+    """Optional function hook to get notified of objects that have changed due to the latest API call."""
 
     def __init__(self, token: str | None):
         self.stats: APIStats = APIStats()
@@ -45,8 +47,8 @@ class APIClient:
         return headers
 
     async def issue_cache_update(self, d: Any):
-        # FIXME: implement
-        pass
+        if self.cache_hook is not None:
+            await self.cache_hook(d)
 
     async def api_call[T](self,
                           method: Literal['get', 'put', 'delete', 'post', 'patch'],
