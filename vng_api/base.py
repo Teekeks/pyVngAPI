@@ -1,3 +1,5 @@
+__all__ = ['APIResponse', 'APIBatchResult', 'APIStats', 'APISub', 'BASEURL', 'ClientException']
+
 from dataclasses import dataclass, field
 from typing import List, TYPE_CHECKING
 
@@ -6,8 +8,6 @@ from aiohttp import ClientResponse
 if TYPE_CHECKING:
     from vng_api.client import APIClient
 
-
-__all__ = ['APIResponse', 'APIBatchResult', 'APIStats', 'APISub', 'BASEURL', 'ClientException']
 
 BASEURL = 'https://neumann-probe.net/api/'
 

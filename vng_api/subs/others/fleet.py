@@ -1,3 +1,5 @@
+__all__ = ['OthersFleetSub']
+
 from typing import List
 
 from vng_api.base import APISub, APIResponse

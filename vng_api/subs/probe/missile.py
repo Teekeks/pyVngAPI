@@ -1,3 +1,5 @@
+__all__ = ['MissileSub']
+
 from vng_api.base import APISub, APIResponse
 from vng_api.types import MissileState
 

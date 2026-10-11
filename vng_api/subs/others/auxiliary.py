@@ -1,10 +1,12 @@
+__all__ = ['AuxiliarySub']
+
 from typing import List
 
 from vng_api.base import APISub, APIResponse
 from vng_api.helper.internal import build_url
 from vng_api.types import ResourceAmounts, ResourceType
 from vng_api.types.others import OthersAuxiliariesResponse, OthersAuxiliary, OthersDepotTransferAction, OthersDepotActionBase, OthersRepairAction, \
-    OthersDeuteriumTransferAction, OthersMineAction, OthersRecallAction
+    OthersDeuteriumTransferAction, OthersMineAction, OthersRecallAction, OthersDormantRecoveryAction
 
 
 class AuxiliarySub(APISub):

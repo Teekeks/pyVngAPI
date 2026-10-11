@@ -1,3 +1,5 @@
+__all__ = ['APIClient']
+
 import asyncio
 from typing import Dict, Literal, Callable, Any, List
 from datetime import datetime, UTC, timedelta
@@ -11,9 +13,6 @@ from vng_api.subs.probe import ProbeSub
 from vng_api.subs.sector import SectorSub
 from vng_api.subs.player import PlayerSub
 from vng_api.subs.mission import MissionSub
-
-__all__ = ['APIClient']
-
 from vng_api.types import CraftingRecipe, Session
 
 

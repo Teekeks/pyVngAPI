@@ -1,3 +1,5 @@
+__all__ = ['OthersSectorSub']
+
 from vng_api.base import APISub, APIResponse
 from vng_api.helper.internal import build_url
 from vng_api.types import Vector, AutonomousUnitObservationResponse

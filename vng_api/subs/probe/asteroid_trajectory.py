@@ -1,3 +1,5 @@
+__all__ = ['AsteroidTrajectorySub']
+
 from typing import Literal
 
 from vng_api.base import APISub, APIResponse

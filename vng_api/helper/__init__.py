@@ -1,4 +1,4 @@
-__all__ = []
+__all__ = ['distance', 'absolute_distance']
 
 from vng_api.types import Vector
 

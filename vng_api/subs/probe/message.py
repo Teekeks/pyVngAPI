@@ -1,4 +1,6 @@
-from typing import List, Literal
+__all__ = ['MessageSub']
+
+from typing import Literal
 
 from vng_api.base import APISub, APIResponse
 from vng_api.helper.internal import build_url

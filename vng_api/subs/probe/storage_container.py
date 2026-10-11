@@ -1,3 +1,5 @@
+__all__ = ['StorageContainerSub']
+
 from typing import List
 
 from vng_api.base import APISub, APIResponse

@@ -1,3 +1,5 @@
+__all__ = ['DamageWarningSub']
+
 from vng_api.base import APISub, APIResponse
 from vng_api.types import ProbeDamageWarningResponse, Alert
 

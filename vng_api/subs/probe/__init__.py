@@ -1,3 +1,5 @@
+__all__ = ['ProbeSub']
+
 from vng_api.base import APISub, APIResponse
 from typing import TYPE_CHECKING
 
@@ -19,8 +21,6 @@ from vng_api.types import ProbeType, OutOfRangeProbe, Probe, ProbeSummaryList, V
 
 if TYPE_CHECKING:
     from vng_api.client import APIClient
-
-__all__ = ['ProbeSub']
 
 
 class ProbeSub(APISub):

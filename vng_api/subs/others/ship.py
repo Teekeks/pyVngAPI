@@ -1,3 +1,5 @@
+__all__ = ['OthersShipSub']
+
 from typing import List, TYPE_CHECKING
 
 from vng_api.base import APISub, APIResponse

@@ -1,3 +1,5 @@
+__all__ = ['OthersAlertSub']
+
 from typing import Literal, List
 
 from vng_api.base import APISub, APIResponse

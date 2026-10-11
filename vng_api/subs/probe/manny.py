@@ -1,3 +1,5 @@
+__all__ = ['MannyTaskManager', 'MannySub']
+
 from vng_api.helper.internal import optional, remove_none
 from vng_api.base import APISub, APIBatchResult, APIResponse
 from typing import TYPE_CHECKING, List, Dict, Any, Iterable, Literal
@@ -6,8 +8,6 @@ from vng_api.types import Manny, Printable, PrintResponse, ResourceType, MannySt
 
 if TYPE_CHECKING:
     from vng_api.client import APIClient
-
-__all__ = ['MannyTaskManager', 'MannySub']
 
 
 class MannyTaskManager(APISub):

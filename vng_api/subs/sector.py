@@ -1,9 +1,9 @@
+__all__ = ['SectorSub']
+
 from typing import List
 
 from vng_api.base import APISub, APIResponse
 from vng_api.types import SectorVisitHistory, SectorObservation
-
-__all__ = ['SectorSub']
 
 
 class SectorSub(APISub):

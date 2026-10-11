@@ -1,3 +1,5 @@
+__all__ = ['InventorySub']
+
 from typing import Literal, List
 
 from vng_api.base import APISub, APIResponse

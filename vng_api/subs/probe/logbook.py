@@ -1,3 +1,5 @@
+__all__ = ['LogBookSub']
+
 from vng_api.base import APISub, APIResponse
 from vng_api.helper.internal import build_url, remove_none
 from vng_api.types import LogbookPage, ProbeLogbookPagesResponse
