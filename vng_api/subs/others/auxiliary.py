@@ -151,5 +151,26 @@ class AuxiliarySub(APISub):
                                           lambda ind: OthersMineAction.from_dict(ind['action']))
 
     async def recall(self, sid: str, auxiliary_id: str) -> APIResponse[OthersRecallAction]:
+        """
+
+        :param sid: Ship ID
+        :param auxiliary_id: Executing auxiliary ID
+        """
         return await self.client.api_call('post', f'others/ships/{sid}/auxiliaries/{auxiliary_id}/recall', {},
                                           lambda inp: OthersRecallAction.from_dict(inp['action']))
+
+    async def recover_dormant_auxiliary(self,
+                                        sid: str,
+                                        auxiliary_id: str,
+                                        target_id: str,) -> APIResponse[OthersDormantRecoveryAction]:
+        """
+
+        :param sid: Ship ID
+        :param auxiliary_id: Executing auxiliary ID
+        :param target_id: ID of dormant auxiliary
+        """
+        param = {
+            'objectId': target_id,
+        }
+        return await self.client.api_call('post', f'others/ships/{sid}/auxiliaries/{auxiliary_id}/recover-dormant-auxiliary', param,
+                                          lambda inp: OthersDormantRecoveryAction.from_dict(inp['action']))
