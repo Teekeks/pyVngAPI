@@ -4,7 +4,7 @@ from vng_api.base import APISub, APIResponse
 from vng_api.helper.internal import build_url
 from vng_api.types import ResourceAmounts, ResourceType
 from vng_api.types.others import OthersAuxiliariesResponse, OthersAuxiliary, OthersDepotTransferAction, OthersDepotActionBase, OthersRepairAction, \
-    OthersDeuteriumTransferAction, OthersActionMine
+    OthersDeuteriumTransferAction, OthersMineAction, OthersRecallAction
 
 
 class AuxiliarySub(APISub):
@@ -133,7 +133,7 @@ class AuxiliarySub(APISub):
                    auxiliary_id: str,
                    target_id: str,
                    resources: List[ResourceType],
-                   target_amount: float) -> APIResponse[OthersActionMine]:
+                   target_amount: float) -> APIResponse[OthersMineAction]:
         """Mine a minable object in sector
 
         :param sid: Ship ID
@@ -147,5 +147,9 @@ class AuxiliarySub(APISub):
             'resources': resources,
             'targetAmount': target_amount,
         }
-        return await self.client.api_call('post', f'others/ships/{sid}/auxiliaries/{auxiliary_id}mine', param,
-                                          lambda ind: OthersActionMine.from_dict(ind['action']))
+        return await self.client.api_call('post', f'others/ships/{sid}/auxiliaries/{auxiliary_id}/mine', param,
+                                          lambda ind: OthersMineAction.from_dict(ind['action']))
+
+    async def recall(self, sid: str, auxiliary_id: str) -> APIResponse[OthersRecallAction]:
+        return await self.client.api_call('post', f'others/ships/{sid}/auxiliaries/{auxiliary_id}/recall', {},
+                                          lambda inp: OthersRecallAction.from_dict(inp['action']))

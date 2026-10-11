@@ -10,7 +10,7 @@ __all__ = ['OthersFleet', 'OthersShip', 'OthersShipMovement', 'OthersFuel', 'Shi
            'OthersObjectMovement', 'OthersScanSource', 'OthersOverview', 'OthersAlert', 'OthersVisitedSector', 'OthersVisitedSectorsResponse',
            'OthersCraftingRecipe', 'OthersCraftingOutput', 'OthersCraftingIngredients', 'OthersRepairAction', 'OthersRepairActionDetail',
            'OthersRepairActionResult', 'OthersBaseAction', 'OthersDeuteriumTransferAction', 'OthersDeuteriumTransferActionResult',
-           'OthersActionMine']
+           'OthersMineAction', 'OthersRecallAction']
 
 from dataclasses import dataclass
 from datetime import datetime
@@ -291,7 +291,16 @@ class OthersBaseAction(DataClassDictMixin):
 
 
 @dataclass
-class OthersActionMine(OthersBaseAction, DataClassDictMixin):
+class OthersRecallAction(OthersBaseAction, DataClassDictMixin):
+    type: Literal['auxiliary_recall']
+    completedAt: datetime | None = None
+    """Present after terminal settlement; omitted while queued."""
+    error: OthersError | None = None
+    """Present only when an error was recorded. An interruption can have a result without error."""
+
+
+@dataclass
+class OthersMineAction(OthersBaseAction, DataClassDictMixin):
     type: Literal['auxiliary_mine']
     completedAt: datetime | None = None
     """Present after terminal settlement; omitted while queued."""
