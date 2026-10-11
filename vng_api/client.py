@@ -6,7 +6,7 @@ from datetime import datetime, UTC, timedelta
 import aiohttp
 import orjson
 
-from vng_api.base import APIStats, BASEURL, APIResponse, ClientException
+from vng_api.base import APIStats, BASEURL, APIResponse, ClientException, APICall
 from vng_api import __version__
 from vng_api.subs.others import OthersSub
 from vng_api.subs.probe import ProbeSub
@@ -66,6 +66,7 @@ class APIClient:
             ret = await session.request(method, BASEURL + path, json=json_data)
             error_code = error_message = data = None
             self.stats.update_from_response(ret)
+            call = APICall(method=method, url=BASEURL + path, data=json_data)
             match ret.status:
                 case 200 | 201 | 202:
                     raw_data = await ret.json()
@@ -96,6 +97,7 @@ class APIClient:
                 error_message=error_message,
                 error_code=error_code,
                 data=data,
+                call=call,
             )
 
     async def version(self) -> APIResponse[int]:

@@ -1,4 +1,4 @@
-__all__ = ['APIResponse', 'APIBatchResult', 'APIStats', 'APISub', 'BASEURL', 'ClientException']
+__all__ = ['APIResponse', 'APIBatchResult', 'APIStats', 'APISub', 'BASEURL', 'ClientException', 'APICall']
 
 from dataclasses import dataclass, field
 from typing import List, TYPE_CHECKING
@@ -12,6 +12,13 @@ if TYPE_CHECKING:
 BASEURL = 'https://neumann-probe.net/api/'
 
 
+@dataclass(frozen=True)
+class APICall:
+    method: str
+    url: str
+    data: dict | None
+
+
 @dataclass
 class APIResponse[T]:
     success: bool
@@ -19,6 +26,7 @@ class APIResponse[T]:
     error_message: str | None
     error_code: str | None
     data: T
+    call: APICall
 
     def __iter__(self):
         return iter([self, self.data])
