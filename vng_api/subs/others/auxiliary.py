@@ -2,9 +2,9 @@ from typing import List
 
 from vng_api.base import APISub, APIResponse
 from vng_api.helper.internal import build_url
-from vng_api.types import ResourceAmounts
+from vng_api.types import ResourceAmounts, ResourceType
 from vng_api.types.others import OthersAuxiliariesResponse, OthersAuxiliary, OthersDepotTransferAction, OthersDepotActionBase, OthersRepairAction, \
-    OthersDeuteriumTransferAction
+    OthersDeuteriumTransferAction, OthersActionMine
 
 
 class AuxiliarySub(APISub):
@@ -127,3 +127,25 @@ class AuxiliarySub(APISub):
         }
         return await self.client.api_call('post', f'others/ships/{sid}/auxiliaries/{auxiliary_id}/transfer-deuterium', param,
                                           lambda inp: OthersDeuteriumTransferAction.from_dict(inp['action']))
+
+    async def mine(self,
+                   sid: str,
+                   auxiliary_id: str,
+                   target_id: str,
+                   resources: List[ResourceType],
+                   target_amount: float) -> APIResponse[OthersActionMine]:
+        """Mine a minable object in sector
+
+        :param sid: Ship ID
+        :param auxiliary_id: Executing auxiliary ID
+        :param target_id: Target minable object ID
+        :param resources: Resources to mine
+        :param target_amount: Amount of resources to mine in ECE
+        """
+        param = {
+            'objectId': target_id,
+            'resources': resources,
+            'targetAmount': target_amount,
+        }
+        return await self.client.api_call('post', f'others/ships/{sid}/auxiliaries/{auxiliary_id}mine', param,
+                                          lambda ind: OthersActionMine.from_dict(ind['action']))

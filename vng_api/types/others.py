@@ -9,7 +9,8 @@ __all__ = ['OthersFleet', 'OthersShip', 'OthersShipMovement', 'OthersFuel', 'Shi
            'OthersInventoryJettisonResponse', 'OthersScan', 'OthersObservedProbe', 'OthersSectorObservation', 'OthersObservedSectorObject',
            'OthersObjectMovement', 'OthersScanSource', 'OthersOverview', 'OthersAlert', 'OthersVisitedSector', 'OthersVisitedSectorsResponse',
            'OthersCraftingRecipe', 'OthersCraftingOutput', 'OthersCraftingIngredients', 'OthersRepairAction', 'OthersRepairActionDetail',
-           'OthersRepairActionResult', 'OthersBaseAction', 'OthersDeuteriumTransferAction', 'OthersDeuteriumTransferActionResult']
+           'OthersRepairActionResult', 'OthersBaseAction', 'OthersDeuteriumTransferAction', 'OthersDeuteriumTransferActionResult',
+           'OthersActionMine']
 
 from dataclasses import dataclass
 from datetime import datetime
@@ -287,6 +288,15 @@ class OthersBaseAction(DataClassDictMixin):
 
     class Config(BaseConfig):
         discriminator = Discriminator(field='type', include_subtypes=True)
+
+
+@dataclass
+class OthersActionMine(OthersBaseAction, DataClassDictMixin):
+    type: Literal['auxiliary_mine']
+    completedAt: datetime | None = None
+    """Present after terminal settlement; omitted while queued."""
+    error: OthersError | None = None
+    """Present only when an error was recorded. An interruption can have a result without error."""
 
 
 @dataclass
