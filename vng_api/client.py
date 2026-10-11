@@ -83,6 +83,8 @@ class APIClient:
                 case 400 | 401 | 403 | 404 | 409 | 422:
                     success = False
                     raw_data = await ret.json()
+                    if raw_data.get('error') is not None:
+                        raw_data = raw_data['error']
                     error_message = raw_data.get('message')
                     error_code = raw_data.get('code')
                 case 500 | 503:
