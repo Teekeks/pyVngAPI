@@ -1,4 +1,4 @@
-__all__ = ['APIResponse', 'APIBatchResult', 'APIStats', 'APISub', 'BASEURL', 'ClientException', 'APICall']
+__all__ = ['APIResponse', 'APIBatchResult', 'APIStats', 'APISub', 'BASEURL', 'ClientException', 'APICall', 'APIException']
 
 from dataclasses import dataclass, field
 from typing import List, TYPE_CHECKING
@@ -10,6 +10,14 @@ if TYPE_CHECKING:
 
 
 BASEURL = 'https://neumann-probe.net/api/'
+
+
+class ClientException(Exception):
+    pass
+
+
+class APIException(Exception):
+    pass
 
 
 @dataclass(frozen=True)
@@ -30,6 +38,14 @@ class APIResponse[T]:
 
     def __iter__(self):
         return iter([self, self.data])
+
+    def may_rise(self):
+        """Will raise an exception if this API call failed"""
+        if not self.success:
+            msg = f'API call `{self.call.method} {self.call.url}` failed with status {self.status}'
+            if self.error_code is not None:
+                msg += f' | {self.error_code}: {self.error_message}'
+            raise APIException(msg)
 
 
 @dataclass
@@ -66,6 +82,3 @@ class APISub:
     def __init__(self, client: "APIClient"):
         self.client = client
 
-
-class ClientException(Exception):
-    pass
