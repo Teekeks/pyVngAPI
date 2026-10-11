@@ -20,7 +20,7 @@ from mashumaro import DataClassDictMixin
 from mashumaro.config import BaseConfig
 from mashumaro.types import Discriminator
 
-from vng_api.types import Sector, Vector, MissileState, ResourceAmounts, ResourceType, MessageStatus
+from vng_api.types import Sector, Vector, MissileState, ResourceAmounts, ResourceType, MessageStatus, BookmarkableSectorObject, MineableSectorObject
 
 type OthersShipType = Literal['mothership', 'standard'] | str
 
@@ -475,6 +475,11 @@ class OthersObjectMovement(DataClassDictMixin):
 
 
 @dataclass
+class OthersBookmarkableSectorObject(BookmarkableSectorObject, DataClassDictMixin):
+    harvestable: bool | None = None
+
+
+@dataclass
 class OthersObservedSectorObject(DataClassDictMixin):
     id: str | int | None = None
     type: str | None = None
@@ -487,6 +492,8 @@ class OthersObservedSectorObject(DataClassDictMixin):
     """Present only on planets observed locally by an Others fleet ship, including planet entries nested in bookmarkTargets and minableTargets. 
     True when remaining planetary resources total strictly more than 5 ECE."""
     movement: OthersObjectMovement | None = None
+    bookmarkTargets: List[OthersBookmarkableSectorObject] | None = None
+    minableTargets: List[MineableSectorObject] | None = None
 
 
 @dataclass
