@@ -1,3 +1,5 @@
+from vng_api.helper import get_manny_minable
+
 # VNG-API
 
 A async API client for the game "[Von Neumann Game](https://neumann-probe.net)" by Gnieark
@@ -86,6 +88,7 @@ Will search the current sector of probe `420` for any object with minable `deute
 
 ```python
 from vng_api.client import APIClient
+from vng_api.helper import get_manny_minable
 import asyncio
 
 async def main():
@@ -93,18 +96,14 @@ async def main():
     ret, sector_response = await client.probe.sector.get(420)
     ret.may_rise()
     found = False
-    for o in sector_response.sector.objects:
-        # check the object itself:
-        if o.resourceAmounts is not None:
-            if o.ResourceAmounts.deuterium > 0:
-                print(f'object {o.id} of type {o.type} has {o.resourceAmounts.deuterium:.2f} deuterium!')
+    # use helper function to extract minable objects from sector observation
+    minable_objects = get_manny_minable(sector_response.sector)
+    # look through objects to search for the ones with deuterium
+    for mo in minable_objects:
+        if mo.resourceAmounts is not None:
+            if mo.ResourceAmounts.deuterium > 0:
+                print(f'object {mo.id} of type {mo.type} has {mo.resourceAmounts.deuterium:.2f} deuterium!')
                 found = True
-        # check all minable sub objects:
-        if o.minableTargets is not None:
-            for minable in o.minableTargets:
-                if minable.resourceAmounts.deuterium > 0:
-                    print(f'object {minable.id} of type {minable.type} has {minable.resourceAmounts.deuterium:.2f} deuterium!')
-                    found = True
     if not found:
         print('no deuterium in this system :(')
     
@@ -119,6 +118,7 @@ Note that for simplicity this example will assume that all auxiliaries are free 
 ```python
 from vng_api.client import APIClient
 from vng_api.types.others import OthersShip
+from vng_api.helper import get_harvestable
 import asyncio
 from pprint import pprint
 
@@ -134,7 +134,8 @@ async def main():
     # get first available harvestable planet
     ret = await client.others.sector.get(mothership.id, mothership.sector.relative)
     ret.may_rise()
-    planets = list(filter(lambda o: False if o.harvestable is None else o.harvestable, ret.data.objects))
+    # use helper function to extract all harvestable sector objects from sector observation
+    planets = get_harvestable(ret.data)
     assert len(planets) > 0
     # start harvest
     ret, action = await client.others.ship.harvest(mothership.id, planets[0].id, mothership.auxiliaryCount)
