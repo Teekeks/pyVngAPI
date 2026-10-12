@@ -69,10 +69,10 @@ class APIStats:
         return self.bucket_size - self.bucket_remaining
 
     def update_from_response(self, ret: ClientResponse):
-        self.bucket_size = ret.headers.get('x-ratelimit-limit', 0)
-        self.bucket_remaining = ret.headers.get('x-ratelimit-remaining', 0)
+        self.bucket_size = int(ret.headers.get('x-ratelimit-limit', 0))
+        self.bucket_remaining = int(ret.headers.get('x-ratelimit-remaining', 0))
         self.is_ratelimited = ret.status == 429
-        self.retry_after = ret.headers.get('retry-after')
+        self.retry_after = int(ret.headers.get('retry-after'))
 
 
 class APISub:
