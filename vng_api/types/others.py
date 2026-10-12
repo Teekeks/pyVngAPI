@@ -10,7 +10,7 @@ __all__ = ['OthersFleet', 'OthersShip', 'OthersShipMovement', 'OthersFuel', 'Shi
            'OthersObjectMovement', 'OthersScanSource', 'OthersOverview', 'OthersAlert', 'OthersVisitedSector', 'OthersVisitedSectorsResponse',
            'OthersCraftingRecipe', 'OthersCraftingOutput', 'OthersCraftingIngredients', 'OthersRepairAction', 'OthersRepairActionDetail',
            'OthersRepairActionResult', 'OthersBaseAction', 'OthersDeuteriumTransferAction', 'OthersDeuteriumTransferActionResult',
-           'OthersMineAction', 'OthersRecallAction', 'OthersDormantRecoveryAction']
+           'OthersMineAction', 'OthersRecallAction', 'OthersDormantRecoveryAction', 'OthersBookmarkableSectorObject']
 
 from dataclasses import dataclass
 from datetime import datetime
