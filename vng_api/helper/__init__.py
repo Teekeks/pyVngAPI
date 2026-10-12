@@ -1,8 +1,9 @@
-__all__ = ['distance', 'absolute_distance', 'neighbours']
+__all__ = ['distance', 'absolute_distance', 'neighbours', 'get_harvestable', 'get_manny_minable']
 
 from typing import List
 
-from vng_api.types import Vector
+from vng_api.types import Vector, SectorObservation, SectorObject, MineableSectorObject
+from vng_api.types.others import OthersBookmarkableSectorObject, OthersObservedSectorObject, OthersSectorObservation
 
 
 def distance(v1: Vector, v2: Vector) -> int:
@@ -46,3 +47,33 @@ def neighbours(v: Vector) -> List[Vector]:
     :param v: Origin vector
     """
     return [Vector.from_dict({'x': i[0] + v.x, 'y': i[1] + v.y, 'z': i[2] + v.z}) for i in _NEIGHBOUR_OFFSETS]
+
+
+def get_harvestable(so: OthersSectorObservation) -> List[OthersObservedSectorObject | OthersBookmarkableSectorObject]:
+    """Returns a list of sector objects harvestable by the Others.
+    :param so: Sector observation
+    """
+    if so.objects is None:
+        return []
+    objects = []
+    for o in so.objects:
+        if o.harvestable is not None and o.harvestable:
+            objects.append(o)
+        if o.bookmarkTargets is not None:
+            objects.extend([b for b in o.bookmarkTargets if b.harvestable is not None and b.harvestable])
+    return objects
+
+
+def get_manny_minable(so: SectorObservation) -> List[SectorObject | MineableSectorObject]:
+    """Returns a list of manny minable sector objects.
+    :param so: Sector observation
+    """
+    if so.objects is None:
+        return []
+    objects = []
+    for o in so.objects:
+        if o.mannyMineable is not None and o.mannyMineable:
+            objects.append(o)
+        if o.minableTargets is not None:
+            objects.extend(o.minableTargets)
+    return objects
