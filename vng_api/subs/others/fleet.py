@@ -3,6 +3,7 @@ __all__ = ['OthersFleetSub']
 from typing import List
 
 from vng_api.base import APISub, APIResponse
+from vng_api.helper.internal import optional
 from vng_api.types import Vector
 from vng_api.types.others import OthersFleet, OthersFleetSummary, OthersFleetMoveResponse, OthersDepotSummary
 
@@ -21,7 +22,11 @@ class OthersFleetSub(APISub):
         return await self.client.api_call('get', 'others/fleets', None,
                                           lambda inp: [OthersFleetSummary.from_dict(x) for x in inp['fleets']])
 
-    async def move(self, fid: str, target: Vector, leave_auxiliaries_behind: bool = False) -> APIResponse[OthersFleetMoveResponse]:
+    async def move(self,
+                   fid: str,
+                   target: Vector,
+                   leave_auxiliaries_behind: bool = False,
+                   exclude_ship_ids: List[str] = None) -> APIResponse[OthersFleetMoveResponse]:
         """Schedule independent moves for eligible fleet ships.
 
         Each surviving fleet ship is evaluated independently against the same destination, relative to the owning player's home sector. The response
@@ -34,11 +39,13 @@ class OthersFleetSub(APISub):
         :param fid: Fleet ID
         :param target: The target system coordinates
         :param leave_auxiliaries_behind: if ture, leaves deployed auxiliaries behind
+        :param exclude_ship_ids: list of ship ids to exclude from the fleet move
         """
-        param = {
+        param = optional({
             'target': target.to_dict(),
-            'leaveAuxiliariesBehind': leave_auxiliaries_behind
-        }
+            'leaveAuxiliariesBehind': leave_auxiliaries_behind,
+            'excludeShipIds': exclude_ship_ids,
+        }, ['excludeShipIds'])
         return await self.client.api_call('post', f'others/fleets/{fid}/move', param,
                                           lambda inp: OthersFleetMoveResponse.from_dict(inp))
 
