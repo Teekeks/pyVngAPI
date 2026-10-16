@@ -46,7 +46,7 @@ You may use `APIResponse.may_rise()` to raise a descriptive exception whenever a
 In the case of batched requests (as used by `APIClient.probe.manny.tasks()`), it will return a `vng_api.base.APIBatchResult` object.
 This behaves similar to `APIResponse` in that the overall success of the batch is checkable via `success`.
 
-The individual `APIResponse` objects of each API call in teh batch are stored in `responses`.
+The individual `APIResponse` objects of each API call in the batch are stored in `responses`.
 
 
 ## Example use
