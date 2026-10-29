@@ -1,8 +1,17 @@
 # VNG-API
+![Static Badge](https://img.shields.io/badge/API_Version-v150-green)
+[![PyPI Version](https://img.shields.io/pypi/v/vng_api?logo=pypi)](https://pypi.org/project/vng-api)
+![Python version](https://img.shields.io/pypi/pyversions/vng_api)
+![GitHub License](https://img.shields.io/github/license/Teekeks/pyVngAPI)
+
+
+
 
 A async API client for the game "[Von Neumann Game](https://neumann-probe.net)" by Gnieark
 
 This library implements both the normal user API as well as the Others NPC API.
+
+Project on PyPi: https://pypi.org/project/vng-api/
 
 ## Basic Principles
 
