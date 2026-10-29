@@ -1,5 +1,3 @@
-from vng_api.helper import get_manny_minable
-
 # VNG-API
 
 A async API client for the game "[Von Neumann Game](https://neumann-probe.net)" by Gnieark
