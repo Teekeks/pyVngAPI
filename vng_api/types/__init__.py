@@ -413,11 +413,11 @@ class SectorObservation(DataClassDictMixin):
     scan: SectorScan
     sensorMode: Literal['normal', 'degraded', 'blind'] | str
     dataFreshness: Literal['live', 'degraded_live', 'historical', 'unavailable'] | str
+    scutCoverageStatus: Literal['covered', 'uncovered', 'unknown'] | str
     distances: List[SectorObservationProbeDistance] | None = None
     objects: List[SectorObject] | None = None
     probes: List[SectorProbePresence] | None = None
     scutNetworks: List[ScutNetworkReference] | None = None
-    scutCoverageStatus: Literal['covered', 'uncovered', 'unknown'] | str | None = None
     estimatedObjects: Dict[Any, Any] | None = None
     possibleObjects: List[str] | None = None
     navigationalRisk: str | None = None
