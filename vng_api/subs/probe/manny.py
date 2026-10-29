@@ -106,8 +106,18 @@ class MannyTaskManager(APISub):
     async def inspect_sector_object(self, mid: str, target_id: str):
         await self._add_task(mid, 'inspect-sector-object', {'objectId': target_id})
 
-    async def recover_storage_container(self, mid: str, container_id: str):
-        await self._add_task(mid, 'recover-storage-container', {'objectId': container_id})
+    async def recover_storage_container(self,
+                                        mid: str,
+                                        container_id: str,
+                                        target_manny_id: str = None):
+        """Recover a detached storage container
+
+        :param mid: Executing Manny ID
+        :param container_id: Target Container ID
+        :param target_manny_id: Optional abandoned occupant id revealed by a completed inspection.
+                Recover only this Manny; omit to recover the whole container.
+        """
+        await self._add_task(mid, 'recover-storage-container', optional({'objectId': container_id, 'mannyId': target_manny_id}, ['mannyId']))
 
     async def install_bookmark(self, mid: str, target_id: str, name: str):
         await self._add_task(mid, 'install-bookmark', {'name': name, 'objectId': target_id})
