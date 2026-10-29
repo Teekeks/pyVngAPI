@@ -16,7 +16,7 @@ __all__ = ['Vector', 'Sector', 'SectorVisitHistory', 'SectorObservation', 'Secto
            'ProbeMindSnapshotReassignResponse', 'LogbookPage', 'LogbookPageSummary', 'ProbeLogbookPagesResponse', 'AsteroidTrajectory',
            'MannyStorageTransferResources', 'SectorStorageResource', 'SectorStorageInventory', 'SectorStorageItem', 'ProbeAlertsMarkAllReadResponse',
            'ProbeAlertsDeleteAllResponse', 'SectorStorageTransferResult', 'SectorStorageTransfer', 'SectorStorageTransferResultComponent',
-           'TransferActor']
+           'TransferActor', 'AbandonedContainerManny']
 
 from dataclasses import dataclass, field
 from mashumaro import DataClassDictMixin
@@ -207,6 +207,15 @@ class Movement(DataClassDictMixin):
 
 
 @dataclass
+class AbandonedContainerManny(DataClassDictMixin):
+    id: str
+    """Stable Manny uid, preserved when recovered."""
+    name: str
+    state: Literal['abandoned'] | str
+    cargo: MannyCargo
+
+
+@dataclass
 class SectorObject(DataClassDictMixin):
     id: str
     """Opaque object id. Clients must not parse coordinates from it. 
@@ -335,6 +344,9 @@ class SectorObject(DataClassDictMixin):
     """Whether this probe has discovered access to this object's storage. Does not grant access to other probes."""
     targetable: bool | None = None
     """Whether this observer currently has enough knowledge to select the structure as a target."""
+    abandonedMannies: List[AbandonedContainerManny] | None = None
+    """Present only for a detached container in a local detailed scan after this player has completed its inspection. 
+    Occupants remain unowned and are not separate drifting sector objects. Reserved containers are absent from scans during recovery."""
 
 
 @dataclass
