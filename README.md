@@ -7,7 +7,7 @@
 
 
 
-A async API client for the game "[Von Neumann Game](https://neumann-probe.net)" by Gnieark
+A async API client for the game "[Von Neumann Game](https://neumann-probe.net)"
 
 This library implements both the normal user API as well as the Others NPC API.
 

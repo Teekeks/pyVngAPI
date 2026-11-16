@@ -19,7 +19,9 @@ class OthersShipSub(APISub):
     def __init__(self, client: "APIClient"):
         super().__init__(client)
         self.auxiliary: AuxiliarySub = AuxiliarySub(client)
+        """Others Ship Auxiliary Endpoints"""
         self.inventory: OthersShipInventorySub = OthersShipInventorySub(client)
+        """Others Ship Inventory Endpoints"""
 
     async def get(self, sid: str) -> APIResponse[OthersShip]:
         """Get one owned Others ship

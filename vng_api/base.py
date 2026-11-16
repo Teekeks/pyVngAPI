@@ -1,3 +1,7 @@
+"""
+Base Classes
+------------
+"""
 __all__ = ['APIResponse', 'APIBatchResult', 'APIStats', 'APISub', 'BASEURL', 'ClientException', 'APICall', 'APIException']
 
 from dataclasses import dataclass, field

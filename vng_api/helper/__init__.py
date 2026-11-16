@@ -44,6 +44,7 @@ _NEIGHBOUR_OFFSETS = [
 
 def neighbours(v: Vector) -> List[Vector]:
     """Returns a list of neighbouring vectors.
+
     :param v: Origin vector
     """
     return [Vector.from_dict({'x': i[0] + v.x, 'y': i[1] + v.y, 'z': i[2] + v.z}) for i in _NEIGHBOUR_OFFSETS]
@@ -51,6 +52,7 @@ def neighbours(v: Vector) -> List[Vector]:
 
 def get_harvestable(so: OthersSectorObservation) -> List[OthersObservedSectorObject | OthersBookmarkableSectorObject]:
     """Returns a list of sector objects harvestable by the Others.
+
     :param so: Sector observation
     """
     if so.objects is None:
@@ -66,6 +68,7 @@ def get_harvestable(so: OthersSectorObservation) -> List[OthersObservedSectorObj
 
 def get_manny_minable(so: SectorObservation) -> List[SectorObject | MineableSectorObject]:
     """Returns a list of manny minable sector objects.
+
     :param so: Sector observation
     """
     if so.objects is None:

@@ -3,8 +3,9 @@
 tests/test.py
 items_type_from_crafting.py
 /api-specs
-/docs
+/planning_docs
 .venv/
 **/__pycache__/
 /scripts
 /dist
+/docs/build

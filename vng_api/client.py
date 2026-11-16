@@ -17,23 +17,29 @@ from vng_api.types import CraftingRecipe, Session
 
 
 class APIClient:
-
-    tool_name: str | None = None
-    """Set this to add your tools name to the user agent string of all requests"""
-    tool_author: str | None = None
-    """Set this to add your tools author to the user agent string of all requests, ignored if tool_name is not set as well."""
-    cache_hook: Callable[[Any], Awaitable[None]] | None = None
-    """Optional function hook to get notified of objects that have changed due to the latest API call."""
+    """API Client"""
 
     def __init__(self, token: str | None):
         self.stats: APIStats = APIStats()
+        """The current API stats"""
         self.token: str | None = token
-        # subs:
+        """The current API token"""
+        self.tool_name: str | None = None
+        """Set this to add your tools name to the user agent string of all requests"""
+        self.tool_author: str | None = None
+        """Set this to add your tools author to the user agent string of all requests, ignored if tool_name is not set as well."""
+        self.cache_hook: Callable[[Any], Awaitable[None]] | None = None
+        """Optional function hook to get notified of objects that have changed due to the latest API call."""
         self.sector: SectorSub = SectorSub(self)
+        """Sector related API endpoints"""
         self.player: PlayerSub = PlayerSub(self)
+        """Player related API endpoints"""
         self.mission: MissionSub = MissionSub(self)
+        """Mission related API endpoints"""
         self.probe: ProbeSub = ProbeSub(self)
+        """Probe related API endpoints"""
         self.others: OthersSub = OthersSub(self)
+        """Other related API endpoints"""
 
     def get_headers(self, require_token: bool) -> Dict[str, str]:
         ua = f'VNG-API Client v{__version__} by Teekeks'

@@ -20,9 +20,13 @@ class OthersSub(APISub):
     def __init__(self, client: "APIClient"):
         super().__init__(client)
         self.fleet: OthersFleetSub = OthersFleetSub(client)
+        """Others Fleet Endpoints"""
         self.ship: OthersShipSub = OthersShipSub(client)
+        "Others Ship Endpoints"
         self.sector: OthersSectorSub = OthersSectorSub(client)
+        "Others Sector Endpoints"
         self.alert: OthersAlertSub = OthersAlertSub(client)
+        "Others Alert Endpoints"
 
     async def overview(self) -> APIResponse[OthersOverview]:
         """Get the operator Others overview

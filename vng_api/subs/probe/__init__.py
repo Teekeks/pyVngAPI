@@ -28,17 +28,29 @@ class ProbeSub(APISub):
     def __init__(self, client: "APIClient"):
         super().__init__(client)
         self.logbook: LogBookSub = LogBookSub(client)
+        """Probe Logbook Endpoints"""
         self.sector: ProbeSectorSub = ProbeSectorSub(client)
+        """Probe Sector Endpoints"""
         self.missile: MissileSub = MissileSub(client)
+        """Probe Missile Endpoints"""
         self.storage_container: StorageContainerSub = StorageContainerSub(client)
+        """Probe Storage Container Endpoints"""
         self.alert: AlertSub = AlertSub(client)
+        """Probe Alert Endpoints"""
         self.damage_warning: DamageWarningSub = DamageWarningSub(client)
+        """Probe Damage Warning Endpoints"""
         self.improvement: ImprovementSub = ImprovementSub(client)
+        """Probe Improvement Endpoints"""
         self.inventory: InventorySub = InventorySub(client)
+        """Probe Inventory Endpoints"""
         self.message: MessageSub = MessageSub(client)
+        """Probe Message Endpoints"""
         self.scut_network: SCUTNetworkSub = SCUTNetworkSub(client)
+        """Probe SCUT Network Endpoints"""
         self.manny: MannySub = MannySub(client)
+        """Probe Manny Endpoints"""
         self.asteroid_trajectory: AsteroidTrajectorySub = AsteroidTrajectorySub(client)
+        """Probe Asteroid Trajectory Endpoints"""
 
     async def get(self, pid: int) -> APIResponse[ProbeType]:
         """Get a Neumann probe by id

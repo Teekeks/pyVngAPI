@@ -29,3 +29,17 @@ build-backend = "hatchling.build"
 
 [tool.hatch.version]
 path = "vng_api/__init__.py"
+
+[dependency-groups]
+docs = [
+    "sphinx",
+    "pydata-sphinx-theme",
+    "sphinx-autodoc-typehints",
+    "recommonmark",
+    "sphinx-paramlinks",
+    "sphinx_favicon",
+    "sphinx-copybutton",
+    "sphinx-design",
+    "sphinx_toolbox",
+    "sphinxcontrib-apidoc"
+]

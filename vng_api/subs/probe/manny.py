@@ -15,8 +15,11 @@ class MannyTaskManager(APISub):
     def __init__(self, client: "APIClient", pid: int):
         super().__init__(client)
         self.tasks: List[Dict[str, Any]] = []
+        """Currently registered but not run tasks"""
         self.pid: int = pid
+        """Probe ID these tasks relate to"""
         self.results: APIBatchResult | None = APIBatchResult()
+        """The results of the API calls"""
 
     async def __aenter__(self):
         return self
@@ -270,7 +273,8 @@ class MannySub(APISub):
         :param pid: Probe ID
         :param mid: Manny ID
         :param new_name: The new name of the mannie
-        :return The newly updated manny
+
+        :return: The newly updated manny
         """
         data = await self.client.api_call('patch',
                                           f'probe/{pid}/mannies/{mid}',
@@ -322,5 +326,6 @@ class MannySub(APISub):
         }, ('missileItemId',))
         return await self.client.api_call('post', f'probe/{pid}/mannies/{mid}/ignite_missile', payload, None)
 
-    def tasks(self, pid: int):
+    def tasks(self, pid: int) -> MannyTaskManager:
+        """Returns a context manager for batching manny tasks."""
         return MannyTaskManager(self.client, pid)
