@@ -11,7 +11,9 @@ A async API client for the game "[Von Neumann Game](https://neumann-probe.net)"
 
 This library implements both the normal user API as well as the Others NPC API.
 
-Project on PyPi: https://pypi.org/project/vng-api/
+Project on PyPi: https://pypi.org/project/vng-api/  
+API Documentation: https://pyvngapi.readthedocs.io
+
 
 ## Basic Principles
 
